@@ -14,6 +14,9 @@ import {
 } from "framer-motion";
 import HamburgerMenu from "@/components/HamburgerMenu";
 import { galleryPieces } from "@/data/galleryData";
+import RomanBust from "@/components/corridor/RomanBust";
+import MiniPainting from "@/components/corridor/MiniPainting";
+import DustMotes from "@/components/corridor/DustMotes";
 
 // ── Data ─────────────────────────────────────────────────────────────────────
 
@@ -230,19 +233,19 @@ function ArtworkFrame({
         }}
         viewBox="0 0 2 40"
       >
-        <line x1="1" y1="0" x2="1" y2="40" stroke="rgba(201,168,76,0.38)" strokeWidth="0.8" />
+        <line x1="1" y1="0" x2="1" y2="40" stroke="rgba(201,168,76,0.45)" strokeWidth="0.8" />
       </svg>
 
-      {/* Pulsing teal dot */}
+      {/* Pulsing teal dot — picture rail nail */}
       <motion.div
-        animate={{ opacity: [0.3, 1, 0.3] }}
-        transition={{ repeat: Infinity, duration: 2.2, ease: "easeInOut" }}
+        animate={{ opacity: [0.35, 1, 0.35], scale: [1, 1.25, 1] }}
+        transition={{ repeat: Infinity, duration: 2.4, ease: "easeInOut" }}
         style={{
           position: "absolute", top: -16, left: "50%",
           transform: "translateX(-50%)",
           width: 6, height: 6, borderRadius: "50%",
           background: "#3a9e9e",
-          boxShadow: "0 0 8px #3a9e9e",
+          boxShadow: "0 0 10px #3a9e9e",
           pointerEvents: "none",
         }}
       />
@@ -254,155 +257,124 @@ function ArtworkFrame({
         onMouseLeave={() => setHovered(false)}
         style={{ position: "relative", cursor: "pointer" }}
       >
-        {/* Spotlight cone */}
+        {/* Spotlight cone — brightens on hover */}
         <motion.div
+          animate={{ opacity: hovered ? 1 : undefined }}
           style={{
-            opacity: spot,
+            opacity: hovered ? undefined : spot,
             position: "absolute", bottom: "100%", left: "50%",
             transform: "translateX(-50%)",
-            width: 200, height: 160,
-            background: "radial-gradient(ellipse at 50% 100%, rgba(255,220,130,0.15) 0%, transparent 70%)",
+            width: 240, height: 200,
+            background:
+              "radial-gradient(ellipse at 50% 100%, rgba(255,222,140,0.22) 0%, rgba(255,210,110,0.08) 45%, transparent 75%)",
             pointerEvents: "none",
+            transition: "opacity 0.4s ease",
           }}
         />
-        {/* Depth strip */}
+
+        {/* Depth strip (back of frame) */}
         <div style={{
-          position: "absolute", right: -5, bottom: -5, top: 4, left: 4,
-          background: "#8a6a20", zIndex: 0,
+          position: "absolute", right: -6, bottom: -6, top: 5, left: 5,
+          background: "linear-gradient(135deg, #6b5018 0%, #3d2e0e 100%)",
+          zIndex: 0,
         }} />
+
         {/* Gold frame */}
         <motion.div
+          className="frame-breath"
           animate={{
-            filter: hovered ? "brightness(1.3)" : "brightness(1)",
-            scale:  hovered ? 1.02 : 1,
+            filter: hovered ? "brightness(1.25)" : "brightness(1)",
+            scale:  hovered ? 1.03 : 1,
+            y:      hovered ? -2 : 0,
           }}
-          transition={{ duration: 0.3 }}
+          transition={{ duration: 0.4, ease: [0.76, 0, 0.24, 1] }}
           style={{
             position: "relative", zIndex: 1,
-            border: "10px solid #c9a84c",
+            border: "10px solid",
+            borderImage:
+              "linear-gradient(135deg, #e6c870 0%, #c9a84c 35%, #8a6d24 65%, #d4b358 100%) 1",
+            background: "#c9a84c",
             boxShadow: hovered
-              ? "-6px 8px 40px rgba(0,0,0,0.65), 0 0 24px rgba(201,168,76,0.35)"
-              : "-6px 8px 40px rgba(0,0,0,0.5)",
+              ? "-8px 10px 50px rgba(0,0,0,0.7), 0 0 32px rgba(201,168,76,0.45)"
+              : "-6px 8px 40px rgba(0,0,0,0.55)",
           }}
         >
-          {/* Dark canvas */}
-          <div style={{
-            background: "#1a1a1a", padding: "18px 18px 14px", minHeight: 140,
-            display: "flex", flexDirection: "column", justifyContent: "flex-end",
-            position: "relative", overflow: "hidden",
-          }}>
+          {/* Inner mat (cream) */}
+          <div style={{ background: "#e8e0c8", padding: 6, position: "relative" }}>
+            {/* The painting */}
             <div style={{
-              position: "absolute", inset: 0,
-              background: "radial-gradient(ellipse at 40% 30%, rgba(100,75,28,0.2) 0%, transparent 65%)",
-              pointerEvents: "none",
-            }} />
-            <p className="font-serif" style={{
-              fontStyle: "italic", color: "#e8e0d0", fontSize: "0.9rem",
-              lineHeight: 1.3, position: "relative", zIndex: 1,
+              position: "relative",
+              width: "100%",
+              aspectRatio: "10 / 7",
+              overflow: "hidden",
+              boxShadow: "inset 0 0 18px rgba(0,0,0,0.35)",
             }}>
-              {p.heading}
-            </p>
-            <div style={{ height: 2, background: "#3a9e9e", marginTop: 10, position: "relative", zIndex: 1 }} />
-            {/* Hover overlay */}
-            <motion.div
-              animate={{ opacity: hovered ? 1 : 0 }}
-              transition={{ duration: 0.25 }}
-              style={{
+              <MiniPainting variant={panelIndex} />
+              {/* Glass sheen */}
+              <div style={{
                 position: "absolute", inset: 0,
-                display: "flex", alignItems: "center", justifyContent: "center",
-                background: "rgba(0,0,0,0.55)",
-                flexDirection: "column", gap: 6,
-              }}
-            >
-              <div style={{ width: 24, height: 1, background: "#c9a84c" }} />
-              <p style={{
-                fontFamily: "'JetBrains Mono', monospace", fontSize: 8,
-                letterSpacing: "0.3em", color: "#c9a84c", textTransform: "uppercase",
-              }}>
-                Click to explore →
-              </p>
-              <div style={{ width: 24, height: 1, background: "#c9a84c" }} />
-            </motion.div>
+                background:
+                  "linear-gradient(115deg, rgba(255,255,255,0) 40%, rgba(255,255,255,0.18) 50%, rgba(255,255,255,0) 60%)",
+                pointerEvents: "none",
+              }} />
+              {/* Hover overlay */}
+              <motion.div
+                animate={{ opacity: hovered ? 1 : 0 }}
+                transition={{ duration: 0.25 }}
+                style={{
+                  position: "absolute", inset: 0,
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  background: "rgba(8,18,18,0.55)",
+                  flexDirection: "column", gap: 6,
+                }}
+              >
+                <div style={{ width: 24, height: 1, background: "#c9a84c" }} />
+                <p style={{
+                  fontFamily: "'JetBrains Mono', monospace", fontSize: 8,
+                  letterSpacing: "0.3em", color: "#e6c870", textTransform: "uppercase",
+                }}>
+                  View piece →
+                </p>
+                <div style={{ width: 24, height: 1, background: "#c9a84c" }} />
+              </motion.div>
+            </div>
           </div>
         </motion.div>
-        {/* Wall label */}
-        <p style={{
-          marginTop: 10, fontFamily: "'JetBrains Mono', monospace",
-          fontSize: 8, letterSpacing: "0.25em", color: "#8aadad",
-          textTransform: "uppercase", textAlign: "center",
+
+        {/* Brass plaque under frame */}
+        <div style={{
+          margin: "10px auto 0",
+          width: "78%",
+          padding: "6px 10px",
+          background: "linear-gradient(180deg, #2a4747 0%, #16292a 100%)",
+          border: "1px solid rgba(201,168,76,0.5)",
+          textAlign: "center",
+          boxShadow: "inset 0 1px 0 rgba(255,255,255,0.06)",
         }}>
-          No. III — {p.label}
-        </p>
+          <p className="font-serif" style={{
+            fontStyle: "italic",
+            color: "#e8e0c8",
+            fontSize: "0.78rem",
+            lineHeight: 1.2,
+            margin: 0,
+          }}>
+            {p.heading}
+          </p>
+          <p style={{
+            marginTop: 3,
+            fontFamily: "'JetBrains Mono', monospace",
+            fontSize: 7, letterSpacing: "0.28em",
+            color: "rgba(201,168,76,0.8)", textTransform: "uppercase",
+          }}>
+            No. III · {p.label}
+          </p>
+        </div>
       </div>
     </div>
   );
 }
 
-// ── Eye sculpture ─────────────────────────────────────────────────────────────
-
-function EyeSculpture({
-  opacity,
-  scale: sc,
-  onClick,
-}: {
-  opacity: MotionValue<number>;
-  scale: MotionValue<number>;
-  onClick: () => void;
-}) {
-  const [hovered, setHovered] = useState(false);
-  return (
-    <motion.div
-      onClick={onClick}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      style={{
-        position: "absolute", left: "47%", top: "30%",
-        width: "6%", minWidth: 68,
-        cursor: "pointer", opacity, scale: sc,
-        transformOrigin: "center bottom",
-        zIndex: 10, pointerEvents: "auto",
-      }}
-    >
-      <svg viewBox="0 0 100 175" width="100%" style={{ overflow: "visible" }}>
-        {/* Base plate */}
-        <rect x="4" y="168" width="92" height="6" rx="1"
-          fill="#1a2e2e" stroke="rgba(201,168,76,0.5)" strokeWidth="0.6" />
-        {/* Pedestal body */}
-        <polygon points="14,168 86,168 78,122 22,122"
-          fill="#1e3535" stroke="rgba(201,168,76,0.4)" strokeWidth="0.7" />
-        {/* Column */}
-        <rect x="43" y="92" width="14" height="32"
-          fill="#243d3d" stroke="rgba(201,168,76,0.25)" strokeWidth="0.5" />
-        {/* Sclera (white of eye) */}
-        <ellipse cx="50" cy="65" rx="36" ry="22" fill="#ddd8cc" opacity="0.88" />
-        {/* Iris */}
-        <ellipse cx="50" cy="65" rx="20" ry="20" fill="#1a6868" />
-        <ellipse cx="50" cy="65" rx="20" ry="20"
-          fill="none" stroke="rgba(58,158,158,0.55)" strokeWidth="1" />
-        {/* Pupil */}
-        <ellipse cx="50" cy="65" rx="9" ry="9" fill="#0a1414" />
-        {/* Highlight */}
-        <circle cx="55" cy="60" r="3" fill="rgba(255,255,255,0.18)" />
-        {/* Eyelids */}
-        <path d="M 14,65 Q 50,40 86,65" fill="none" stroke="#1a2e2e" strokeWidth="1.5" />
-        <path d="M 14,65 Q 50,82 86,65" fill="none" stroke="#1a2e2e" strokeWidth="1" />
-        {/* Hover glow ring */}
-        {hovered && (
-          <ellipse cx="50" cy="65" rx="39" ry="25"
-            fill="none" stroke="rgba(58,158,158,0.45)" strokeWidth="1.5" />
-        )}
-        {/* Label */}
-        <text x="50" y="118" textAnchor="middle"
-          fontFamily="monospace" fontSize="5"
-          fill="rgba(201,168,76,0.6)" letterSpacing="3">THE EYE</text>
-        <text x="50" y="148" textAnchor="middle"
-          fontFamily="monospace" fontSize="4"
-          fill={hovered ? "rgba(58,158,158,0.9)" : "rgba(58,158,158,0.45)"}
-          letterSpacing="2">CONTACT ↗</text>
-      </svg>
-    </motion.div>
-  );
-}
+// ── (Eye sculpture removed — replaced by <RomanBust /> from /components/corridor) ──
 
 // ── Reduced-motion fallback ───────────────────────────────────────────────────
 
@@ -578,6 +550,9 @@ export default function CorridorPage() {
             >
               <CorridorScene floorY={floorY} edgeOp={edgeOp} />
 
+              {/* Atmospheric dust motes drifting in the light beams */}
+              <DustMotes count={26} />
+
               {/* Station 1 — left */}
               <motion.div style={{
                 position: "absolute", top: "28%", left: "3%", width: "22vw",
@@ -610,11 +585,11 @@ export default function CorridorPage() {
                 <ArtworkFrame panelIndex={3} spot={s4sp} onClick={() => setSelectedPanel(3)} />
               </motion.div>
 
-              {/* Eye sculpture */}
-              <EyeSculpture
+              {/* Roman bust — opens Instagram in a new tab */}
+              <RomanBust
                 opacity={sculptureOp}
                 scale={sculptureSc}
-                onClick={() => router.push("/contact")}
+                href={piece.panel.links?.find(l => l.label.toLowerCase().includes("instagram"))?.href ?? "https://instagram.com/"}
               />
 
               {/* Progress dots */}

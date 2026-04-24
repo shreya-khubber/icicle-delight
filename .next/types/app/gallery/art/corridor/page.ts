@@ -1,4 +1,4 @@
-// File: C:\Users\SHREYA\Desktop\portfolio website\src\app\gallery\art\corridor\page.tsx
+// File: /dev-server/src/app/gallery/art/corridor/page.tsx
 import * as entry from '../../../../../../src/app/gallery/art/corridor/page.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 
