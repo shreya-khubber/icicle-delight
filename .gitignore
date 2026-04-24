@@ -1,3 +1,6 @@
+# Large binary exceeding GitHub's 100MB limit
+node_modules/@next/swc-win32-x64-msvc/next-swc.win32-x64-msvc.node
+
 # Next.js build output
 out/
 
