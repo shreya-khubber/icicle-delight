@@ -374,71 +374,7 @@ function ArtworkFrame({
   );
 }
 
-// ── Eye sculpture ─────────────────────────────────────────────────────────────
-
-function EyeSculpture({
-  opacity,
-  scale: sc,
-  onClick,
-}: {
-  opacity: MotionValue<number>;
-  scale: MotionValue<number>;
-  onClick: () => void;
-}) {
-  const [hovered, setHovered] = useState(false);
-  return (
-    <motion.div
-      onClick={onClick}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      style={{
-        position: "absolute", left: "47%", top: "30%",
-        width: "6%", minWidth: 68,
-        cursor: "pointer", opacity, scale: sc,
-        transformOrigin: "center bottom",
-        zIndex: 10, pointerEvents: "auto",
-      }}
-    >
-      <svg viewBox="0 0 100 175" width="100%" style={{ overflow: "visible" }}>
-        {/* Base plate */}
-        <rect x="4" y="168" width="92" height="6" rx="1"
-          fill="#1a2e2e" stroke="rgba(201,168,76,0.5)" strokeWidth="0.6" />
-        {/* Pedestal body */}
-        <polygon points="14,168 86,168 78,122 22,122"
-          fill="#1e3535" stroke="rgba(201,168,76,0.4)" strokeWidth="0.7" />
-        {/* Column */}
-        <rect x="43" y="92" width="14" height="32"
-          fill="#243d3d" stroke="rgba(201,168,76,0.25)" strokeWidth="0.5" />
-        {/* Sclera (white of eye) */}
-        <ellipse cx="50" cy="65" rx="36" ry="22" fill="#ddd8cc" opacity="0.88" />
-        {/* Iris */}
-        <ellipse cx="50" cy="65" rx="20" ry="20" fill="#1a6868" />
-        <ellipse cx="50" cy="65" rx="20" ry="20"
-          fill="none" stroke="rgba(58,158,158,0.55)" strokeWidth="1" />
-        {/* Pupil */}
-        <ellipse cx="50" cy="65" rx="9" ry="9" fill="#0a1414" />
-        {/* Highlight */}
-        <circle cx="55" cy="60" r="3" fill="rgba(255,255,255,0.18)" />
-        {/* Eyelids */}
-        <path d="M 14,65 Q 50,40 86,65" fill="none" stroke="#1a2e2e" strokeWidth="1.5" />
-        <path d="M 14,65 Q 50,82 86,65" fill="none" stroke="#1a2e2e" strokeWidth="1" />
-        {/* Hover glow ring */}
-        {hovered && (
-          <ellipse cx="50" cy="65" rx="39" ry="25"
-            fill="none" stroke="rgba(58,158,158,0.45)" strokeWidth="1.5" />
-        )}
-        {/* Label */}
-        <text x="50" y="118" textAnchor="middle"
-          fontFamily="monospace" fontSize="5"
-          fill="rgba(201,168,76,0.6)" letterSpacing="3">THE EYE</text>
-        <text x="50" y="148" textAnchor="middle"
-          fontFamily="monospace" fontSize="4"
-          fill={hovered ? "rgba(58,158,158,0.9)" : "rgba(58,158,158,0.45)"}
-          letterSpacing="2">CONTACT ↗</text>
-      </svg>
-    </motion.div>
-  );
-}
+// ── (Eye sculpture removed — replaced by <RomanBust /> from /components/corridor) ──
 
 // ── Reduced-motion fallback ───────────────────────────────────────────────────
 
@@ -614,6 +550,9 @@ export default function CorridorPage() {
             >
               <CorridorScene floorY={floorY} edgeOp={edgeOp} />
 
+              {/* Atmospheric dust motes drifting in the light beams */}
+              <DustMotes count={26} />
+
               {/* Station 1 — left */}
               <motion.div style={{
                 position: "absolute", top: "28%", left: "3%", width: "22vw",
@@ -646,11 +585,11 @@ export default function CorridorPage() {
                 <ArtworkFrame panelIndex={3} spot={s4sp} onClick={() => setSelectedPanel(3)} />
               </motion.div>
 
-              {/* Eye sculpture */}
-              <EyeSculpture
+              {/* Roman bust — opens Instagram in a new tab */}
+              <RomanBust
                 opacity={sculptureOp}
                 scale={sculptureSc}
-                onClick={() => router.push("/contact")}
+                href={piece.panel.links?.find(l => l.label.toLowerCase().includes("instagram"))?.href ?? "https://instagram.com/"}
               />
 
               {/* Progress dots */}
