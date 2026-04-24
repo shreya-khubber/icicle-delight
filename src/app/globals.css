@@ -1,0 +1,59 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@300;400&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: #ffffff;
+  color: #0a0a0a;
+  overflow-x: hidden;
+}
+
+::selection {
+  background: rgba(0,0,0,0.12);
+}
+
+::-webkit-scrollbar { width: 3px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #aaa; }
+
+/* Track light glow keyframe */
+@keyframes flicker {
+  0%, 100% { opacity: 1; }
+  92% { opacity: 1; }
+  93% { opacity: 0.85; }
+  94% { opacity: 1; }
+}
+
+.track-light { animation: flicker 8s ease-in-out infinite; }
+.track-light:nth-child(2) { animation-delay: 2.1s; }
+.track-light:nth-child(3) { animation-delay: 0.7s; }
+.track-light:nth-child(4) { animation-delay: 4.3s; }
+.track-light:nth-child(5) { animation-delay: 1.5s; }
+.track-light:nth-child(6) { animation-delay: 3.2s; }
+.track-light:nth-child(7) { animation-delay: 5.8s; }
+
+/* SVG line draw */
+.draw-line {
+  stroke-dasharray: 2000;
+  stroke-dashoffset: 2000;
+  animation: drawIn 2.4s cubic-bezier(0.76,0,0.24,1) forwards;
+}
+@keyframes drawIn {
+  to { stroke-dashoffset: 0; }
+}
+
+.draw-line-slow {
+  stroke-dasharray: 3000;
+  stroke-dashoffset: 3000;
+  animation: drawIn 3.5s cubic-bezier(0.76,0,0.24,1) 0.3s forwards;
+}
