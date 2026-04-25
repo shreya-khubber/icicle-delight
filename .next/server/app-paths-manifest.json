@@ -1,8 +1,6 @@
 {
-  "/gallery/[id]/page": "app/gallery/[id]/page.js",
+  "/_not-found/page": "app/_not-found/page.js",
   "/page": "app/page.js",
-  "/lounge/page": "app/lounge/page.js",
-  "/contact/page": "app/contact/page.js",
-  "/now/page": "app/now/page.js",
-  "/gallery/art/corridor/page": "app/gallery/art/corridor/page.js"
+  "/gallery/art/corridor/page": "app/gallery/art/corridor/page.js",
+  "/contact/page": "app/contact/page.js"
 }

@@ -57,3 +57,33 @@ body {
   stroke-dashoffset: 3000;
   animation: drawIn 3.5s cubic-bezier(0.76,0,0.24,1) 0.3s forwards;
 }
+
+/* ── Gallery Corridor 3-D surfaces ───────────────────────────────────────── */
+.corridor-wall {
+  background: linear-gradient(180deg, #162820 0%, #263830 45%, #1e3028 100%);
+}
+.corridor-floor {
+  background:
+    repeating-linear-gradient(90deg, rgba(0,0,0,0.20) 0 1px, transparent 1px 120px),
+    repeating-linear-gradient(0deg,  rgba(0,0,0,0.15) 0 1px, transparent 1px 160px),
+    #b8903c;
+}
+.corridor-ceiling {
+  background: linear-gradient(to bottom, #080e0c 0%, #101e18 100%);
+}
+.corridor-gold-frame {
+  background: linear-gradient(135deg, #8a6018, #d4a84c, #f0c870, #d4a84c, #8a6018);
+  box-shadow:
+    0 20px 50px rgba(0,0,0,0.8),
+    inset 0 0 0 2px rgba(255,210,110,0.35),
+    inset 0 0 0 9px rgba(90,55,10,1),
+    inset 0 0 0 11px rgba(200,158,60,1);
+}
+.corridor-gold-frame:hover {
+  box-shadow:
+    0 28px 60px rgba(0,0,0,0.85),
+    0 0 32px rgba(201,168,76,0.22),
+    inset 0 0 0 2px rgba(255,230,140,0.55),
+    inset 0 0 0 9px rgba(90,55,10,1),
+    inset 0 0 0 11px rgba(220,178,70,1);
+}
