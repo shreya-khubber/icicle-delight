@@ -175,7 +175,7 @@ function CorridorPainting({
             {PANELS[painting.panelIndex].heading}
           </p>
           <p style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 7, letterSpacing: "0.22em", color: "rgba(200,210,190,0.5)", textTransform: "uppercase", marginTop: 2 }}>
-            No. III Â· {PANELS[painting.panelIndex].label}
+            No. III | {PANELS[painting.panelIndex].label}
           </p>
         </div>
       </button>
@@ -285,7 +285,7 @@ function BackWall({ showCTA, onContact }: { showCTA: boolean; onContact: () => v
             <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 13, letterSpacing: "0.35em", color: "#d4b878", textTransform: "uppercase" }}>
               Contact
             </span>
-            <span style={{ fontSize: 14, color: "rgba(201,168,76,0.8)" }}>â†—</span>
+            <span style={{ fontSize: 14, color: "rgba(201,168,76,0.8)" }}>-&gt;</span>
           </button>
         </div>
       </Plane>
@@ -300,7 +300,7 @@ function ReducedLayout() {
     <div className="min-h-screen" style={{ background: "#111a14" }}>
       <HamburgerMenu />
       <div className="max-w-2xl mx-auto px-10 pb-20" style={{ paddingTop: 80 }}>
-        <p className="font-mono text-[9px] tracking-[0.3em] uppercase mb-4" style={{ color: "#7aadad" }}>No. III â€” The Eye</p>
+        <p className="font-mono text-[9px] tracking-[0.3em] uppercase mb-4" style={{ color: "#7aadad" }}>No. III - The Eye</p>
         <h1 className="font-serif text-4xl font-light mb-2" style={{ color: "#e8dcc8" }}>{piece.title}</h1>
         <p className="font-serif italic mb-10" style={{ color: "#7aadad" }}>{piece.subtitle}</p>
         {piece.panel.sections.map((s, i) => (
@@ -385,10 +385,10 @@ export default function CorridorPage() {
             style={{ height: 40, padding: "0 40px", paddingRight: 72, background: "rgba(9,15,12,0.97)", borderBottom: "1px solid rgba(201,168,76,0.18)" }}
           >
             <Link href="/" className="font-mono text-[10px] tracking-[0.25em] uppercase hover:opacity-70 transition-opacity" style={{ color: "#7aadad" }}>
-              â† Icicle
+              &lt;- Icicle
             </Link>
             <p className="font-mono text-[10px] tracking-[0.25em] uppercase" style={{ color: "#7aadad" }}>
-              No. III â€” The Eye
+              No. III - The Eye
             </p>
             <div className="flex items-center gap-2">
               {galleryPieces.map((p) => (
@@ -474,7 +474,7 @@ export default function CorridorPage() {
               {piece.title}
             </h1>
             <p className="mt-3 font-serif italic text-sm" style={{ color: "rgba(232,220,200,0.55)" }}>
-              Scroll to walk Â· {PAINTINGS.length} works
+              Scroll to walk | {PAINTINGS.length} works
             </p>
           </div>
 
@@ -495,7 +495,7 @@ export default function CorridorPage() {
           {/* Keyboard hint */}
           <p className="font-mono text-[7px] tracking-widest pointer-events-none hidden md:block"
             style={{ position: "absolute", bottom: 10, right: 16, color: "#2a4a38", opacity: 0.8, whiteSpace: "nowrap", zIndex: 10 }}>
-            â†‘ â†“ walk  Â·  Esc exit
+            Up Down walk | Esc exit
           </p>
         </div>
       </div>
@@ -520,25 +520,25 @@ export default function CorridorPage() {
                 key="modal"
                 initial={{ opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 28 }}
                 transition={{ duration: 0.45, ease: [0.76, 0, 0.24, 1] }}
-                style={{ position: "fixed", inset: "3.5%", zIndex: 59, background: "linear-gradient(135deg, #07120d 0%, #0a1711 55%, #08110d 100%)", border: "1px solid rgba(92,138,116,0.2)", boxShadow: "0 28px 90px rgba(0,0,0,0.78)", display: "flex", overflow: "hidden", flexDirection: "column" }}
-                className="md:flex-row"
+                style={{ position: "fixed", inset: "3.5%", zIndex: 59, background: "linear-gradient(135deg, #07120d 0%, #0a1711 55%, #08110d 100%)", border: "1px solid rgba(92,138,116,0.2)", boxShadow: "0 28px 90px rgba(0,0,0,0.78)", display: "flex", overflow: "hidden" }}
+                className="flex-col md:flex-row"
               >
                 <button
                   onClick={() => setActive(null)}
                   style={{ position: "absolute", top: 20, right: 24, zIndex: 10, background: "none", border: "none", cursor: "pointer", fontFamily: "'JetBrains Mono', monospace", fontSize: 8, letterSpacing: "0.3em", color: "#7aadad", textTransform: "uppercase" }}
                 >
-                  âœ• Close
+                  X Close
                 </button>
 
-                {/* Left â€” painting fills edge-to-edge, no frame */}
-                <div className="md:order-2" style={{ flex: 1.45,
+                {/* Left - painting */}
+                <div style={{ flex: "0 0 65%",
                     position: "relative",
                     overflow: "hidden",
-                    background: "linear-gradient(180deg, #0b1610 0%, #09130f 100%)",
+                    background: "linear-gradient(180deg, #0d1812 0%, #09120e 100%)",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    padding: "44px 44px 34px",
+                    padding: "36px 30px 30px",
                   }}
                 >
                   <div
@@ -553,9 +553,9 @@ export default function CorridorPage() {
                   >
                     <img
                       src={activePainting.src}
-                      alt={`${panel.heading} â€” Painting ${activePainting.id}`}
+                      alt={`${panel.heading} - Painting ${activePainting.id}`}
                       draggable={false}
-                      style={{ width: "100%", height: "100%", maxWidth: "min(72vw, 980px)", maxHeight: "calc(100vh - 150px)", objectFit: "contain", objectPosition: "center center", display: "block", filter: "drop-shadow(0 28px 42px rgba(0,0,0,0.45))" }}
+                      style={{ width: "100%", height: "100%", maxWidth: "min(68vw, 1100px)", maxHeight: "calc(100vh - 120px)", objectFit: "contain", objectPosition: "center center", display: "block", filter: "drop-shadow(0 30px 48px rgba(0,0,0,0.48))" }}
                       onError={(e) => { (e.target as HTMLImageElement).style.opacity = "0"; }}
                     />
                   </div>
@@ -563,10 +563,10 @@ export default function CorridorPage() {
                   <div style={{ position: "absolute", inset: 0, background: "radial-gradient(circle at center, rgba(255,244,220,0.05) 0%, rgba(9,19,15,0) 55%)", pointerEvents: "none" }} />
                 </div>
 
-                {/* Right â€” text */}
-                <div className="md:order-1" style={{ flex: 0.78, padding: "84px 44px 44px", overflowY: "auto", display: "flex", flexDirection: "column", justifyContent: "center", minWidth: 0, background: "linear-gradient(180deg, rgba(6,20,14,0.98) 0%, rgba(7,25,17,0.96) 100%)", borderRight: "1px solid rgba(58,158,100,0.12)" }}>
+                {/* Right - details */}
+                <div style={{ flex: "0 0 35%", padding: "84px 42px 44px", overflowY: "auto", display: "flex", flexDirection: "column", justifyContent: "center", minWidth: 0, background: "linear-gradient(180deg, rgba(6,20,14,0.98) 0%, rgba(7,25,17,0.96) 100%)", borderLeft: "1px solid rgba(58,158,100,0.12)" }}>
                   <p style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 8, letterSpacing: "0.3em", color: "#7aadad", textTransform: "uppercase", marginBottom: 8 }}>
-                    No. III · The Eye · {panel.label}
+                    No. III | The Eye | {panel.label}
                   </p>
                   <div style={{ width: 36, height: 1, background: "rgba(201,168,76,0.4)", marginBottom: 28 }} />
                   <h2 className="font-serif font-light" style={{ fontSize: "clamp(28px, 4vw, 56px)", color: "#e3d7c2", lineHeight: 1.04, marginBottom: 14 }}>
@@ -583,12 +583,12 @@ export default function CorridorPage() {
                     {piece.panel.links?.slice(0, 1).map((l, i) => (
                       <a key={i} href={l.href} target="_blank" rel="noopener noreferrer"
                         style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "11px 20px", border: "1px solid rgba(201,168,76,0.42)", fontFamily: "'JetBrains Mono', monospace", fontSize: 8, letterSpacing: "0.24em", color: "#c9a84c", textTransform: "uppercase", textDecoration: "none", background: "rgba(201,168,76,0.06)" }}>
-                        {l.label} <span style={{ fontSize: 7 }}>â†—</span>
+                        {l.label} <span style={{ fontSize: 7 }}>-&gt;</span>
                       </a>
                     ))}
                     <Link href="/contact" onClick={() => setActive(null)}
                       style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "11px 20px", border: "1px solid rgba(58,158,100,0.4)", fontFamily: "'JetBrains Mono', monospace", fontSize: 8, letterSpacing: "0.24em", color: "#8ebea0", textTransform: "uppercase", textDecoration: "none", background: "rgba(58,158,100,0.06)" }}>
-                      Contact <span style={{ fontSize: 7 }}>â†—</span>
+                      Contact <span style={{ fontSize: 7 }}>-&gt;</span>
                     </Link>
                   </div>
                 </div>
