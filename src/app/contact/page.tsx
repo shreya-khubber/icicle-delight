@@ -6,9 +6,10 @@ import GalleryCeiling from "@/components/GalleryCeiling";
 import HamburgerMenu from "@/components/HamburgerMenu";
 
 const LINKS = [
-  { label: "Email", value: "shreya@example.com", href: "mailto:shreya@example.com" },
-  { label: "LinkedIn", value: "linkedin.com/in/shreya-khubber", href: "https://linkedin.com" },
-  { label: "GitHub", value: "github.com/shreya-khubber", href: "https://github.com" },
+  { label: "Email",     value: "shreya.khubber@gmail.com",        href: "mailto:shreya.khubber@gmail.com" },
+  { label: "LinkedIn",  value: "linkedin.com/in/shreya-khubber",  href: "https://linkedin.com/in/shreya-khubber" },
+  { label: "Instagram", value: "@migratinglife",                   href: "https://www.instagram.com/migratinglife/" },
+  { label: "GitHub",    value: "github.com/shreya-khubber",       href: "https://github.com/shreya-khubber" },
 ];
 
 export default function ContactPage() {
@@ -69,13 +70,13 @@ export default function ContactPage() {
                 transition={{ duration: 0.5, delay: 0.55 + i * 0.1, ease: [0.76, 0, 0.24, 1] }}
                 className="flex items-baseline justify-between gap-8 pb-4 border-b border-g-light group"
               >
-                <span className="font-mono text-g-ice text-[9px] tracking-widest uppercase w-16 flex-shrink-0">
+                <span className="font-mono text-g-dim text-[9px] tracking-widest uppercase w-20 flex-shrink-0">
                   {link.label}
                 </span>
                 <span className="font-serif text-g-dark text-base group-hover:text-g-ice transition-colors duration-300 flex-1">
                   {link.value}
                 </span>
-                <span className="text-g-light group-hover:text-g-ice transition-colors text-sm">↗</span>
+                <span className="text-g-mid group-hover:text-g-ice transition-colors text-sm">↗</span>
               </motion.a>
             ))}
           </div>

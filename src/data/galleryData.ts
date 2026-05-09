@@ -169,3 +169,150 @@ export const galleryPieces: GalleryPiece[] = [
     },
   },
 ];
+
+export interface WandererBook {
+  id: string;
+  title: string;
+  category: string;
+  status: string;
+  timeframe: string;
+  tags: string[];
+  width: string;
+  height: string;
+  spineGradient: string;
+  summary: string;
+  longDescription: string;
+  whatIDid: string;
+  whatILearned: string;
+  outcome: string;
+  links?: { label: string; href: string }[];
+}
+
+export const wandererBooks: WandererBook[] = [
+  {
+    id: "market-discovery",
+    title: "Demand-First Launch",
+    category: "Startup Research",
+    status: "Prototype",
+    timeframe: "Q1 2026",
+    tags: ["market", "product", "testing"],
+    width: "120px",
+    height: "260px",
+    spineGradient: "linear-gradient(180deg, #2e4f6c, #1d2f3f)",
+    summary: "Mapped demand signals from creators and built a lean landing page to validate willingness to pay.",
+    longDescription:
+      "I turned a market question into a lightweight demand test. The goal was to learn whether a specific creator need could be turned into a product instead of guessing from a slide deck.",
+    whatIDid:
+      "I interviewed 12 creators, built a simple landing page, and tracked conversion behavior over one week. I then iterated the value proposition based on real responses.",
+    whatILearned:
+      "Clear demand often lives in a small, specific audience. The idea was useful, but the go-to-market path needed a narrower problem definition.",
+    outcome:
+      "I paused the prototype after learning the core user needed more than a simple message board — it deserved a richer interaction design and deeper trust signals.",
+    links: [{ label: "View notes", href: "#" }],
+  },
+  {
+    id: "data-ethics",
+    title: "Ethics of Signal",
+    category: "Research Note",
+    status: "Explored",
+    timeframe: "Jan 2026",
+    tags: ["data", "ethics", "finance"],
+    width: "100px",
+    height: "225px",
+    spineGradient: "linear-gradient(180deg, #574c77, #31264c)",
+    summary: "A short paper on how noisy trading signals become biased when they’re treated as truth.",
+    longDescription:
+      "I wrote a compact research essay examining the gap between signal discovery and responsible deployment. This was inspired by conversations in quant research and index design.",
+    whatIDid:
+      "I built a conceptual framework that separates signal sources into behavioural, technical, and structural categories and tested it against past index launches.",
+    whatILearned:
+      "The most useful models are those that can say what they don’t understand. Framing assumptions clearly added more value than adding another feature.",
+    outcome:
+      "The note became a reference for later product conversations, especially when designing index guardrails and validation criteria.",
+    links: [{ label: "Read essay", href: "#" }],
+  },
+  {
+    id: "learning-journey",
+    title: "Learning Path",
+    category: "Experiment",
+    status: "Active",
+    timeframe: "Ongoing",
+    tags: ["habit", "skills", "design"],
+    width: "96px",
+    height: "210px",
+    spineGradient: "linear-gradient(180deg, #6b5335, #321f0f)",
+    summary: "A modular reading log for tracking themes, ideas, and action items across books and papers.",
+    longDescription:
+      "This was a usability experiment in turning passive reading into active practice. I wanted a format that kept research from staying stuck in notes.",
+    whatIDid:
+      "I sketched a card-based workflow, interviewed peers about learning habits, and built a simple web prototype to test daily capture.",
+    whatILearned:
+      "The best learning systems are small and forgiving. The value came from a regular habit, not a perfect interface.",
+    outcome:
+      "I still use the format personally, and it gave me a clearer way to own future research experiments.",
+    links: [{ label: "Open model", href: "#" }],
+  },
+  {
+    id: "neighbourhood",
+    title: "Local Micro-Market",
+    category: "Startup Idea",
+    status: "Paused",
+    timeframe: "Dec 2025",
+    tags: ["local", "economy", "community"],
+    width: "104px",
+    height: "250px",
+    spineGradient: "linear-gradient(180deg, #4a5c2a, #1d2711)",
+    summary: "A quick market scan for a neighbourhood commerce app with a low-friction exchange model.",
+    longDescription:
+      "I tested whether a community-based offering could work for adjacent local services. The idea was meant to focus on immediacy and familiarity rather than broad scale.",
+    whatIDid:
+      "I mapped local supply, built a pricing hypothesis, and ran interviews with 20 micro-business owners and service providers.",
+    whatILearned:
+      "Local trust is fragile. A useful product needs a clear social contract — otherwise it is just another message board.",
+    outcome:
+      "I kept the concept as a reserve idea and moved focus toward contexts where trust and repeated use are already built in.",
+    links: [{ label: "See brief", href: "#" }],
+  },
+  {
+    id: "creative-ritual",
+    title: "Studio Signals",
+    category: "Practice",
+    status: "Refined",
+    timeframe: "Nov 2025",
+    tags: ["art", "process", "software"],
+    width: "110px",
+    height: "240px",
+    spineGradient: "linear-gradient(180deg, #3e2f44, #1b1323)",
+    summary: "A concept for a tool that captures the small rituals around making work, not just the final piece.",
+    longDescription:
+      "I explored how creative habits could become their own product. The focus was on process scaffolding, not output validation.",
+    whatIDid:
+      "I assembled a set of creative prompts, built a visual moodboard, and tested a simple capture flow with a handful of classmates.",
+    whatILearned:
+      "Creative systems need low friction and room for mess. The signal of success is whether people return to the process.",
+    outcome:
+      "The prototype is still a sketch, but the ideas have influenced how I structure creative experiments elsewhere.",
+    links: [{ label: "Explore prompt set", href: "#" }],
+  },
+  {
+    id: "meaning-maps",
+    title: "Meaning Map",
+    category: "Research",
+    status: "Published",
+    timeframe: "Aug 2025",
+    tags: ["cognition", "systems", "models"],
+    width: "118px",
+    height: "235px",
+    spineGradient: "linear-gradient(180deg, #44566d, #17222b)",
+    summary: "A short framework for how meaning shifts when data becomes a shared story.",
+    longDescription:
+      "This work came out of a curiosity about how the same fact can feel different in research, design, and business. I wanted a model that was both precise and poetic.",
+    whatIDid:
+      "I drew a mapping exercise, tested it with 10 collaborators, and wrote a concise note that linked mental models to product decisions.",
+    whatILearned:
+      "The best maps are not exhaustive; they are useful. The thing that made it valuable was a simple shared vocabulary.",
+    outcome:
+      "I shared the note with a small group and used it as a reference in later strategy conversations.",
+    links: [{ label: "Read summary", href: "#" }],
+  },
+];

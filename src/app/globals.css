@@ -1,4 +1,6 @@
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@300;400&display=swap');
+@import url('https://api.fontshare.com/v2/css?f[]=editorial-new@400,700&display=swap');
+@import url('https://api.fontshare.com/v2/css?f[]=neue-montreal@300,400,500,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Geist+Mono:wght@300;400;500&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=JetBrains+Mono:wght@300;400&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -57,6 +59,10 @@ body {
   stroke-dashoffset: 3000;
   animation: drawIn 3.5s cubic-bezier(0.76,0,0.24,1) 0.3s forwards;
 }
+
+/* ── Writer book page body — hide scrollbar while keeping scroll ─────────── */
+.book-body::-webkit-scrollbar { display: none; }
+.book-body { -ms-overflow-style: none; scrollbar-width: none; }
 
 /* ── Gallery Corridor 3-D surfaces ───────────────────────────────────────── */
 .corridor-wall {
