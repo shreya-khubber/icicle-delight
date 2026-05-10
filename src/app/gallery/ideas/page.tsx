@@ -349,8 +349,55 @@ function RightPanel() {
 
 // ── Modal ─────────────────────────────────────────────────────────────────────
 
-function BookModal({ book, onClose }: { book: Book; onClose: () => void }) {
+function BookModal({ book, onClose, isMobile }: { book: Book; onClose: () => void; isMobile: boolean }) {
   const gold = hex2rgb(book.goldHex);
+
+  if (isMobile) {
+    return (
+      <motion.div key="sheet"
+        initial={{ opacity:0 }} animate={{ opacity:1 }} exit={{ opacity:0 }}
+        transition={{ duration:0.25 }}
+        style={{ position:"fixed", inset:0, zIndex:59, display:"flex", flexDirection:"column",
+          background:"linear-gradient(160deg,#0a0804 0%,#100e08 100%)",
+        }}>
+
+          {/* Top bar with leather accent + close */}
+          <div style={{ height:4, background:book.leather, flexShrink:0 }} />
+          <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"12px 20px", borderBottom:"1px solid rgba(201,168,76,0.12)", flexShrink:0 }}>
+            <p style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:8, letterSpacing:"0.28em", color:"#c9a84c", textTransform:"uppercase" }}>{book.tag}</p>
+            <button onClick={onClose} style={{ all:"unset", cursor:"pointer", fontFamily:"'JetBrains Mono',monospace", fontSize:9, letterSpacing:"0.3em", color:"rgba(201,168,76,0.6)", textTransform:"uppercase" }}>✕ Close</button>
+          </div>
+
+          {/* Scrollable content */}
+          <div style={{ overflowY:"auto", flex:1, padding:"24px 24px 40px" }}>
+            <h2 style={{ fontFamily:"'Cormorant Garamond',serif", fontSize:32, color:"#e8dcc8", fontWeight:300, lineHeight:1.1, marginBottom:10, letterSpacing:"0.02em" }}>
+              {book.title}
+            </h2>
+            <p style={{ fontFamily:"'Cormorant Garamond',serif", fontSize:15, fontStyle:"italic", color:"#7aadad", marginBottom:20, lineHeight:1.55 }}>
+              {book.brief}
+            </p>
+            <div style={{ height:1, background:"rgba(201,168,76,0.14)", marginBottom:20 }} />
+            <p style={{ fontFamily:"'Neue Montreal','system-ui',sans-serif", fontSize:14, color:"#bdc7b6", lineHeight:1.85 }}>
+              {book.description}
+            </p>
+            <div style={{ marginTop:24, display:"flex", alignItems:"center", gap:12, flexWrap:"wrap" }}>
+              <span style={{ display:"inline-flex", alignItems:"center", gap:6, padding:"8px 14px", border:"1px solid rgba(201,168,76,0.28)", fontFamily:"'JetBrains Mono',monospace", fontSize:8, letterSpacing:"0.22em", color:"#c9a84c", textTransform:"uppercase" }}>
+                <span style={{ width:5, height:5, borderRadius:"50%", background:book.status.toLowerCase().includes("ongoing")||book.status.toLowerCase().includes("perpetual")?"#34d399":"rgba(201,168,76,0.65)", flexShrink:0 }} />
+                {book.status}
+              </span>
+              {book.href && (
+                <a href={book.href} target="_blank" rel="noopener noreferrer"
+                  style={{ display:"inline-flex", alignItems:"center", gap:6, padding:"8px 14px", border:`1px solid rgba(${hex2rgb(book.goldHex)},0.5)`, fontFamily:"'JetBrains Mono',monospace", fontSize:8, letterSpacing:"0.22em", color:book.goldHex, textTransform:"uppercase", textDecoration:"none" }}>
+                  View PDF ↗
+                </a>
+              )}
+            </div>
+          </div>
+
+        </motion.div>
+    );
+  }
+
   return (
     <>
       <motion.div key="bg" initial={{ opacity:0 }} animate={{ opacity:1 }} exit={{ opacity:0 }} transition={{ duration:0.28 }}
@@ -429,8 +476,16 @@ export default function WandererPage() {
   const [activeBook,  setActiveBook]  = useState<Book | null>(null);
   const [mouseY, setMouseY] = useState(0);
   const [entered, setEntered] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => { setEntered(true); }, []);
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
 
   const handleMouseMove = useCallback((e: React.MouseEvent) => {
     setMouseY((e.clientY / window.innerHeight - 0.5) * 3);
@@ -466,73 +521,73 @@ export default function WandererPage() {
       {/* Three-column library layout */}
       <div style={{ position:"absolute", top:40, left:0, right:0, bottom:0, display:"flex" }}>
 
-        {/* Left info panel */}
-        <LeftPanel hoveredBook={hoveredBook} />
+        {/* Left info panel — hidden on mobile */}
+        {!isMobile && <LeftPanel hoveredBook={hoveredBook} />}
 
-        {/* Centre — bookcase */}
-        <div style={{ flex:1, display:"flex", alignItems:"flex-start", justifyContent:"center", position:"relative", overflowY:"auto", paddingTop:24, paddingBottom:32 }}>
-          {/* Ceiling glow */}
-          <div style={{ position:"absolute", top:0, left:"50%", transform:"translateX(-50%)", width:"90%", height:240, background:"radial-gradient(ellipse at 50% 0%,rgba(201,168,76,0.09) 0%,transparent 72%)", pointerEvents:"none" }} />
+        {/* Centre */}
+        <div style={{ flex:1, overflowY:"auto", position:"relative" }}>
 
-          {/* Perspective scene */}
-          <div style={{ perspective:"1500px", perspectiveOrigin:"50% 36%" }}>
-            <motion.div
-              initial={{ opacity:0, y:28 }}
-              animate={{ opacity:entered?1:0, y:entered?0:28 }}
-              transition={{ duration:1.1, ease:[0.76,0,0.24,1] }}
-              style={{
-                transformStyle:"preserve-3d",
-                transform:`rotateX(${8 - mouseY*0.28}deg)`,
-                transition:"transform 0.55s cubic-bezier(0.25,0.46,0.45,0.94)",
-              }}
-            >
-              {/* Bookcase */}
-              <div style={{
-                background:"linear-gradient(to right,#0e0804 0%,#1c1008 8%,#261608 50%,#1c1008 92%,#0e0804 100%)",
-                padding:"0 20px",
-                boxShadow:"0 40px 80px rgba(0,0,0,0.85), 0 0 0 1px rgba(201,168,76,0.1), inset 0 0 60px rgba(0,0,0,0.55)",
-              }}>
-                {/* Title plaque above shelves */}
-                <div style={{ padding:"16px 24px 12px", textAlign:"center", borderBottom:"1px solid rgba(201,168,76,0.15)" }}>
-                  <div style={{ height:1, background:"linear-gradient(to right,transparent,rgba(201,168,76,0.4),transparent)", marginBottom:10 }} />
-                  <p style={{ fontFamily:"'Cormorant Garamond',serif", fontSize:22, color:"rgba(201,168,76,0.75)", fontStyle:"italic", fontWeight:300, letterSpacing:"0.12em" }}>
-                    Research Vault
-                  </p>
-                  <p style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:7, letterSpacing:"0.3em", color:"rgba(201,168,76,0.3)", textTransform:"uppercase", marginTop:4 }}>
-                    Research Vault · 11 Documents
-                  </p>
-                  <div style={{ height:1, background:"linear-gradient(to right,transparent,rgba(201,168,76,0.25),transparent)", marginTop:10 }} />
-                </div>
-
-                <div style={{ padding:"16px 0 0" }}>
-                  <LibraryShelf books={ROW1} onHover={setHoveredBook} onOpen={setActiveBook} />
-                  <div style={{ height:16 }} />
-                  <LibraryShelf books={ROW2} onHover={setHoveredBook} onOpen={setActiveBook} />
-                </div>
-
-                {/* Bottom moulding */}
-                <div style={{ height:1, background:"linear-gradient(to right,transparent,rgba(201,168,76,0.25),transparent)", marginTop:4 }} />
-                <div style={{ height:16, background:"linear-gradient(to bottom,#261608,#160e04)" }} />
+          {isMobile ? (
+            /* ── MOBILE: flat scrollable list ── */
+            <div style={{ padding:"16px 16px 40px" }}>
+              <p style={{ fontFamily:"'Cormorant Garamond',serif", fontSize:20, color:"rgba(201,168,76,0.8)", fontStyle:"italic", textAlign:"center", marginBottom:4 }}>Research Vault</p>
+              <p style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:7, letterSpacing:"0.3em", color:"rgba(201,168,76,0.3)", textTransform:"uppercase", textAlign:"center", marginBottom:20 }}>11 Documents · tap to read</p>
+              <div style={{ height:1, background:"linear-gradient(to right,transparent,rgba(201,168,76,0.3),transparent)", marginBottom:16 }} />
+              {RESEARCH_BOOKS.map((book) => (
+                <button key={book.id} onClick={() => setActiveBook(book)}
+                  style={{ all:"unset", display:"flex", alignItems:"center", gap:14, width:"100%", padding:"14px 0", borderBottom:"1px solid rgba(201,168,76,0.1)", cursor:"pointer" }}>
+                  <div style={{ width:6, height:36, borderRadius:2, background:book.leather, flexShrink:0 }} />
+                  <div style={{ flex:1, textAlign:"left" }}>
+                    <p style={{ fontFamily:"'Cormorant Garamond',serif", fontSize:16, color:"#e8dcc8", lineHeight:1.2, marginBottom:3 }}>{book.title}</p>
+                    <p style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:7, letterSpacing:"0.22em", color:"rgba(201,168,76,0.5)", textTransform:"uppercase" }}>{book.spine}</p>
+                  </div>
+                  <span style={{ fontFamily:"'Cormorant Garamond',serif", fontSize:18, color:"rgba(201,168,76,0.4)" }}>›</span>
+                </button>
+              ))}
+            </div>
+          ) : (
+            /* ── DESKTOP: 3-D bookcase ── */
+            <div style={{ display:"flex", alignItems:"flex-start", justifyContent:"center", paddingTop:24, paddingBottom:32, position:"relative" }}>
+              <div style={{ position:"absolute", top:0, left:"50%", transform:"translateX(-50%)", width:"90%", height:240, background:"radial-gradient(ellipse at 50% 0%,rgba(201,168,76,0.09) 0%,transparent 72%)", pointerEvents:"none" }} />
+              <div style={{ perspective:"1500px", perspectiveOrigin:"50% 36%" }}>
+                <motion.div
+                  initial={{ opacity:0, y:28 }}
+                  animate={{ opacity:entered?1:0, y:entered?0:28 }}
+                  transition={{ duration:1.1, ease:[0.76,0,0.24,1] }}
+                  style={{ transformStyle:"preserve-3d", transform:`rotateX(${8 - mouseY*0.28}deg)`, transition:"transform 0.55s cubic-bezier(0.25,0.46,0.45,0.94)" }}
+                >
+                  <div style={{ background:"linear-gradient(to right,#0e0804 0%,#1c1008 8%,#261608 50%,#1c1008 92%,#0e0804 100%)", padding:"0 20px", boxShadow:"0 40px 80px rgba(0,0,0,0.85), 0 0 0 1px rgba(201,168,76,0.1), inset 0 0 60px rgba(0,0,0,0.55)" }}>
+                    <div style={{ padding:"16px 24px 12px", textAlign:"center", borderBottom:"1px solid rgba(201,168,76,0.15)" }}>
+                      <div style={{ height:1, background:"linear-gradient(to right,transparent,rgba(201,168,76,0.4),transparent)", marginBottom:10 }} />
+                      <p style={{ fontFamily:"'Cormorant Garamond',serif", fontSize:22, color:"rgba(201,168,76,0.75)", fontStyle:"italic", fontWeight:300, letterSpacing:"0.12em" }}>Research Vault</p>
+                      <p style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:7, letterSpacing:"0.3em", color:"rgba(201,168,76,0.3)", textTransform:"uppercase", marginTop:4 }}>Research Vault · 11 Documents</p>
+                      <div style={{ height:1, background:"linear-gradient(to right,transparent,rgba(201,168,76,0.25),transparent)", marginTop:10 }} />
+                    </div>
+                    <div style={{ padding:"16px 0 0" }}>
+                      <LibraryShelf books={ROW1} onHover={setHoveredBook} onOpen={setActiveBook} />
+                      <div style={{ height:16 }} />
+                      <LibraryShelf books={ROW2} onHover={setHoveredBook} onOpen={setActiveBook} />
+                    </div>
+                    <div style={{ height:1, background:"linear-gradient(to right,transparent,rgba(201,168,76,0.25),transparent)", marginTop:4 }} />
+                    <div style={{ height:16, background:"linear-gradient(to bottom,#261608,#160e04)" }} />
+                  </div>
+                </motion.div>
               </div>
-            </motion.div>
-          </div>
-
-          {/* Floor hint text */}
-          <motion.p
-            initial={{ opacity:0 }} animate={{ opacity:0.35 }} transition={{ delay:1.4, duration:0.8 }}
-            style={{ position:"absolute", bottom:24, left:"50%", transform:"translateX(-50%)", fontFamily:"'JetBrains Mono',monospace", fontSize:8.5, letterSpacing:"0.35em", textTransform:"uppercase", color:"#c9a84c", whiteSpace:"nowrap" }}
-          >
-            hover to discover · click to read
-          </motion.p>
+              <motion.p initial={{ opacity:0 }} animate={{ opacity:0.35 }} transition={{ delay:1.4, duration:0.8 }}
+                style={{ position:"absolute", bottom:24, left:"50%", transform:"translateX(-50%)", fontFamily:"'JetBrains Mono',monospace", fontSize:8.5, letterSpacing:"0.35em", textTransform:"uppercase", color:"#c9a84c", whiteSpace:"nowrap" }}>
+                hover to discover · click to read
+              </motion.p>
+            </div>
+          )}
         </div>
 
-        {/* Right catalogue panel */}
-        <RightPanel />
+        {/* Right catalogue panel — desktop only */}
+        {!isMobile && <RightPanel />}
       </div>
 
       {/* Modal */}
       <AnimatePresence>
-        {activeBook && <BookModal book={activeBook} onClose={() => setActiveBook(null)} />}
+        {activeBook && <BookModal book={activeBook} onClose={() => setActiveBook(null)} isMobile={isMobile} />}
       </AnimatePresence>
     </main>
   );

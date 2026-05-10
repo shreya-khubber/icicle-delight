@@ -3,7 +3,7 @@
 import { Canvas, useFrame, useThree, type ThreeEvent } from "@react-three/fiber";
 import { useTexture, Html, Preload } from "@react-three/drei";
 import * as THREE from "three";
-import { Suspense, useEffect, useMemo, useRef } from "react";
+import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { PAINTINGS, type PaintingDef } from "@/data/corridorPaintings";
 
 // World units: ~1 unit ≈ 1 meter
@@ -146,10 +146,20 @@ function Painting({
 }
 
 function Paintings({ onOpen }: { onOpen: (id: number) => void }) {
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
+
+  const firstZ = isMobile ? -6 : FIRST_Z;
+
   const positioned = useMemo(() => {
     return PAINTINGS.map((p, i) => {
       const t = i / (PAINTINGS.length - 1);
-      const z = FIRST_Z + t * (LAST_Z - FIRST_Z);
+      const z = firstZ + t * (LAST_Z - firstZ);
       const isLeft = p.side === "left";
       // Push painting centers further into the corridor so the rotated frame
       // doesn't clip the wall when tilted.
@@ -163,7 +173,7 @@ function Paintings({ onOpen }: { onOpen: (id: number) => void }) {
         rotation: [0, ry, 0] as [number, number, number],
       };
     });
-  }, []);
+  }, [firstZ]);
 
   return (
     <>

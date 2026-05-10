@@ -1223,13 +1223,35 @@ export default function WriterPage() {
             </div>
           )}
 
-          {/* Page */}
+          {/* Page — tap left/right thirds to navigate */}
           <div
             className="book-body"
             onTouchStart={onTouchStart}
             onTouchEnd={onTouchEnd}
             style={{ flex: 1, overflow: "auto", background: "linear-gradient(160deg, #f5e8c5 0%, #f0e0ba 60%, #ead8a8 100%)", position: "relative" }}
           >
+            {/* Left tap zone */}
+            {mobilePage > 0 && (
+              <button
+                onClick={() => setMobilePage(p => Math.max(0, p - 1))}
+                style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: "28%", background: "transparent", border: "none", cursor: "pointer", zIndex: 10, display: "flex", alignItems: "center", justifyContent: "flex-start", paddingLeft: 10 }}
+                aria-label="Previous page"
+              >
+                <span style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 32, color: "rgba(90,58,26,0.28)", lineHeight: 1 }}>‹</span>
+              </button>
+            )}
+
+            {/* Right tap zone */}
+            {mobilePage < MOBILE_PAGES.length && (
+              <button
+                onClick={() => setMobilePage(p => Math.min(MOBILE_PAGES.length, p + 1))}
+                style={{ position: "absolute", right: 0, top: 0, bottom: 0, width: "28%", background: "transparent", border: "none", cursor: "pointer", zIndex: 10, display: "flex", alignItems: "center", justifyContent: "flex-end", paddingRight: 10 }}
+                aria-label="Next page"
+              >
+                <span style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 32, color: "rgba(90,58,26,0.28)", lineHeight: 1 }}>›</span>
+              </button>
+            )}
+
             {mobilePage === 0 ? (
               /* Cover */
               <div style={{ minHeight: "100%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 14, padding: "48px 32px" }}>
@@ -1238,7 +1260,7 @@ export default function WriterPage() {
                 <p style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 16, fontStyle: "italic", color: "#6a4a1e" }}>Articles &amp; Poems</p>
                 <div style={{ width: 40, height: 1, background: "#8a6a3a" }} />
                 <p style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 13, letterSpacing: "0.15em", color: "#5a3a1a" }}>Shreya Khubber</p>
-                <p style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 8, color: "rgba(90,58,26,0.4)", letterSpacing: "0.22em", textTransform: "uppercase", marginTop: 24 }}>Tap › to open</p>
+                <p style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 8, color: "rgba(90,58,26,0.4)", letterSpacing: "0.22em", textTransform: "uppercase", marginTop: 24 }}>Tap right side to open</p>
               </div>
             ) : (
               /* Content page */
@@ -1246,21 +1268,11 @@ export default function WriterPage() {
                 <MobilePageContent page={MOBILE_PAGES[mobilePage - 1]} />
               </div>
             )}
-          </div>
 
-          {/* Bottom navigation bar */}
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "6px 20px", background: "rgba(4,3,1,0.97)", borderTop: "1px solid rgba(201,140,40,0.14)", flexShrink: 0 }}>
-            <button
-              onClick={() => setMobilePage(p => Math.max(0, p - 1))}
-              style={{ all: "unset", cursor: mobilePage === 0 ? "default" : "pointer", opacity: mobilePage === 0 ? 0.2 : 0.85, fontFamily: "'Cormorant Garamond',serif", fontSize: 30, color: "rgba(201,160,60,0.9)", lineHeight: 1, padding: "4px 10px" }}
-            >‹</button>
-            <p style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 8, letterSpacing: "0.22em", color: "rgba(201,140,40,0.45)", textTransform: "uppercase" }}>
-              {mobilePage === 0 ? "Cover" : `${mobilePage} of ${MOBILE_PAGES.length}`}
+            {/* Page counter — subtle, bottom center */}
+            <p style={{ position: "absolute", bottom: 10, left: "50%", transform: "translateX(-50%)", fontFamily: "'JetBrains Mono',monospace", fontSize: 7, letterSpacing: "0.22em", color: "rgba(90,58,26,0.3)", textTransform: "uppercase", pointerEvents: "none" }}>
+              {mobilePage === 0 ? "cover" : `${mobilePage} / ${MOBILE_PAGES.length}`}
             </p>
-            <button
-              onClick={() => setMobilePage(p => Math.min(MOBILE_PAGES.length, p + 1))}
-              style={{ all: "unset", cursor: mobilePage >= MOBILE_PAGES.length ? "default" : "pointer", opacity: mobilePage >= MOBILE_PAGES.length ? 0.2 : 0.85, fontFamily: "'Cormorant Garamond',serif", fontSize: 30, color: "rgba(201,160,60,0.9)", lineHeight: 1, padding: "4px 10px" }}
-            >›</button>
           </div>
         </div>
       )}
