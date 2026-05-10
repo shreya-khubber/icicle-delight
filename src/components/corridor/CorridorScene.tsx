@@ -223,7 +223,7 @@ function Lighting() {
 // ── Statue ─────────────────────────────────────────────────────────────────
 
 function Statue() {
-  const tex = useTexture("/statue.webp");
+  const tex = useTexture("/corridor/statue.webp");
   useEffect(() => {
     tex.colorSpace = THREE.SRGBColorSpace;
     tex.needsUpdate = true;

@@ -4,7 +4,6 @@ import { useState, useCallback, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import HamburgerMenu from "@/components/HamburgerMenu";
 
 // ── Page data ─────────────────────────────────────────────────────────────────
 
@@ -1187,7 +1186,6 @@ export default function WriterPage() {
       backgroundRepeat: "no-repeat",
       imageRendering: "auto",
     }}>
-      <HamburgerMenu />
 
       {/* Nav */}
       <div className="absolute left-0 right-0 top-0 z-30 flex items-center justify-between"

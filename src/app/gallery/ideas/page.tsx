@@ -4,7 +4,6 @@ import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import HamburgerMenu from "@/components/HamburgerMenu";
 import { galleryPieces } from "@/data/galleryData";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -240,11 +239,8 @@ function LeftPanel({ hoveredBook }: { hoveredBook: Book | null }) {
             initial={{ opacity:0, y:8 }} animate={{ opacity:1, y:0 }} exit={{ opacity:0, y:-8 }}
             transition={{ duration:0.22 }}
           >
-            <p style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:11, letterSpacing:"0.22em", color:"#c9a84c", textTransform:"uppercase", marginBottom:5 }}>
+            <p style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:11, letterSpacing:"0.22em", color:"#c9a84c", textTransform:"uppercase", marginBottom:16 }}>
               {hoveredBook.tag}
-            </p>
-            <p style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:11, letterSpacing:"0.18em", color:"rgba(201,168,76,0.55)", textTransform:"uppercase", marginBottom:16 }}>
-              {hoveredBook.year}
             </p>
             <div style={{ height:1, background:"linear-gradient(to right,rgba(201,168,76,0.5),transparent)", marginBottom:18 }} />
             <p style={{ fontFamily:"'Cormorant Garamond',serif", fontSize:30, color:"#e8dcc8", fontWeight:300, fontStyle:"italic", lineHeight:1.15, marginBottom:14 }}>
@@ -341,7 +337,7 @@ function RightPanel() {
       <div style={{ height:1, background:"linear-gradient(to right,transparent,rgba(201,168,76,0.25),transparent)", marginTop:16, marginBottom:16 }} />
 
       <p style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:10, letterSpacing:"0.15em", color:"rgba(201,168,76,0.45)", textTransform:"uppercase", lineHeight:2.1, marginBottom:16 }}>
-        Author: S. Khubber<br />2022 — 2024
+        Author: S. Khubber
       </p>
 
       <p style={{ fontFamily:"'Cormorant Garamond',serif", fontSize:15, color:"rgba(232,220,200,0.45)", fontStyle:"italic", lineHeight:1.65 }}>
@@ -389,7 +385,7 @@ function BookModal({ book, onClose }: { book: Book; onClose: () => void }) {
             × Close
           </button>
           <p style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:8, letterSpacing:"0.28em", color:"#c9a84c", textTransform:"uppercase", marginBottom:6 }}>
-            {book.tag} · {book.year}
+            {book.tag}
           </p>
           <div style={{ width:32, height:1, background:"rgba(201,168,76,0.4)", marginBottom:22 }} />
           <h2 style={{ fontFamily:"'Cormorant Garamond',serif", fontSize:"clamp(28px,3.5vw,50px)", color:"#e8dcc8", fontWeight:300, lineHeight:1.1, marginBottom:12 }}>
@@ -457,7 +453,6 @@ export default function WandererPage() {
       style={{ background:"#050302" }}
       onMouseMove={handleMouseMove}
     >
-      <HamburgerMenu />
 
       {/* Nav */}
       <div className="absolute left-0 right-0 top-0 z-30 flex items-center justify-between"

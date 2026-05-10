@@ -1,203 +1,382 @@
 "use client";
 
 import { motion } from "framer-motion";
-import GalleryFrame from "@/components/GalleryFrame";
-import GalleryRoom from "@/components/GalleryRoom";
-import GalleryCeiling from "@/components/GalleryCeiling";
+import Link from "next/link";
 import HamburgerMenu from "@/components/HamburgerMenu";
-import SpeakeasyDoor from "@/components/SpeakeasyDoor";
+import Artwork from "@/components/Artwork";
 import { galleryPieces } from "@/data/galleryData";
+
+// ── Section backgrounds (each is the full image — text overlays on top) ──
+const BG_HERO      = "/backgrounds/hero.jpg";
+const BG_EXHIBITS  = "/backgrounds/exhibits.jpg";
+const BG_SPEAKEASY = "/backgrounds/speakeasy.jpg";
+
+// ── Reusable text-shadow recipe used over the dark sky/space backgrounds ──
+const SHADOW = "0 2px 12px rgba(0,8,24,0.7), 0 1px 3px rgba(0,8,24,0.5)";
+const SHADOW_SOFT = "0 1px 6px rgba(0,8,24,0.6)";
 
 export default function Home() {
   return (
-    <main className="relative h-screen overflow-hidden">
-      {/* Fixed background layers — outside the scroll container so they
-          don't move with snap scrolling */}
-      <GalleryCeiling />
+    <main className="relative h-screen overflow-hidden bg-[#070d1a]">
+      {/* The doorknob hamburger — fixed, on top of everything */}
       <HamburgerMenu />
-      <GalleryRoom />
 
-      {/* Snap-scroll container. Snap is mandatory on desktop (where mouse
-          wheels and trackpads play nicely with it) and proximity on mobile
-          (where iOS Safari's momentum scroll fights mandatory snap and
-          feels janky). scroll-smooth gives the eased transition. */}
+      {/* Snap-scroll container. Sections inside each carry their own
+          background image. Mobile gets gentle proximity snap; desktop
+          gets crisp mandatory snap. */}
       <div
         className="relative z-10 h-screen overflow-y-scroll overflow-x-hidden snap-y snap-proximity md:snap-mandatory"
         style={{ scrollBehavior: "smooth", WebkitOverflowScrolling: "touch" }}
       >
-        {/* ── Section 1: HERO ─────────────────────────────────────────── */}
-        <section className="min-h-screen md:h-screen snap-start flex flex-col items-center justify-center px-8">
-          <motion.header
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 1, delay: 0.1 }}
-            className="text-center"
-          >
-            <motion.h1
-              initial={{ opacity: 0, y: 24 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1.1, delay: 0.3, ease: [0.76, 0, 0.24, 1] }}
-              className="font-serif font-light mb-3"
-              style={{
-                fontSize: "clamp(4.5rem, 13vw, 10rem)",
-                letterSpacing: "-0.02em",
-                color: "#ffffff",
-                lineHeight: 1,
-                textShadow: "0 4px 24px rgba(0,12,32,0.55), 0 1px 4px rgba(0,12,32,0.45)",
-              }}
-            >
-              Icicle
-            </motion.h1>
-
-            <motion.div
-              initial={{ scaleX: 0 }}
-              animate={{ scaleX: 1 }}
-              transition={{ duration: 0.9, delay: 0.6, ease: [0.76, 0, 0.24, 1] }}
-              className="h-px bg-g-ice w-28 mx-auto mb-4 origin-left"
-              style={{ boxShadow: "0 0 12px rgba(168,205,216,0.6)" }}
-            />
-
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.8, delay: 0.8 }}
-              className="font-serif text-lg italic"
-              style={{
-                color: "#ffffff",
-                textShadow: "0 2px 10px rgba(0,12,32,0.7), 0 1px 2px rgba(0,12,32,0.5)",
-              }}
-            >
-              Shreya Khubber
-            </motion.p>
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.8, delay: 1 }}
-              className="font-mono text-[10px] sm:text-[11px] tracking-[0.3em] uppercase mt-2"
-              style={{
-                color: "rgba(255,255,255,0.92)",
-                textShadow: "0 2px 8px rgba(0,12,32,0.75), 0 0 2px rgba(0,12,32,0.6)",
-              }}
-            >
-              Finance · Code · Art · Writing · Ideas
-            </motion.p>
-          </motion.header>
-
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.8, delay: 1.1 }}
-            className="text-center px-8 mt-12"
-          >
-            <p
-              className="font-serif text-base sm:text-lg italic max-w-md mx-auto leading-relaxed"
-              style={{
-                color: "#ffffff",
-                textShadow: "0 2px 12px rgba(0,12,32,0.75), 0 1px 3px rgba(0,12,32,0.5)",
-              }}
-            >
-              &ldquo;Each work is a window into a different room of the same mind.
-              Begin anywhere.&rdquo;
-            </p>
-          </motion.div>
-
-          {/* Scroll cue */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.8, delay: 1.6 }}
-            className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
-          >
-            <span
-              className="font-mono text-[9px] tracking-[0.4em] uppercase animate-pulse"
-              style={{
-                color: "#ffffff",
-                textShadow: "0 1px 6px rgba(0,12,32,0.85)",
-              }}
-            >
-              Scroll
-            </span>
-            <div
-              className="h-10 w-px"
-              style={{ background: "linear-gradient(to bottom, rgba(255,255,255,0.95), transparent)" }}
-            />
-          </motion.div>
-        </section>
-
-        {/* ── Section 2: EXHIBITS ─────────────────────────────────────── */}
-        <section className="min-h-screen md:h-screen snap-start flex flex-col items-center justify-center px-8 pt-20 md:pt-24 pb-12">
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: false, amount: 0.4 }}
-            transition={{ duration: 0.8, ease: [0.76, 0, 0.24, 1] }}
-            className="w-full max-w-6xl mb-10 px-2"
-          >
-            <div className="flex items-center gap-5">
-              <div className="h-px bg-white/80 flex-1" style={{ boxShadow: "0 0 8px rgba(255,255,255,0.4)" }} />
-              <p
-                id="collection"
-                className="text-[10px] sm:text-[11px] tracking-[0.28em] uppercase font-mono font-semibold whitespace-nowrap"
-                style={{
-                  color: "#ffffff",
-                  textShadow: "0 2px 8px rgba(0,12,32,0.8), 0 0 2px rgba(0,12,32,0.6)",
-                }}
-              >
-                exhibits to my life
-              </p>
-              <div className="h-px bg-white/80 flex-1" style={{ boxShadow: "0 0 8px rgba(255,255,255,0.4)" }} />
-            </div>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: false, amount: 0.3 }}
-            transition={{ duration: 0.9, delay: 0.15, ease: [0.76, 0, 0.24, 1] }}
-            className="w-full px-4 md:px-10 lg:px-16"
-          >
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8 md:gap-10 lg:gap-12 w-full max-w-[1500px] mx-auto">
-              {galleryPieces.map((piece, i) => (
-                <GalleryFrame key={piece.id} piece={piece} index={i} />
-              ))}
-            </div>
-          </motion.div>
-        </section>
-
-        {/* ── Section 3: SPEAKEASY ────────────────────────────────────── */}
-        <section className="min-h-screen md:h-screen snap-start relative">
-          {/* Door anchored so its base (the step) lands exactly on the
-              floor seam (the floor band starts at 28% from the bottom in
-              GalleryRoom). The 56px offset compensates for the
-              "The Speakeasy / After Hours →" label that lives inside
-              SpeakeasyDoor below the SVG, so the SVG's step is right at
-              the seam — door visually stands on the floor. */}
-          <div
-            className="absolute left-1/2 -translate-x-1/2"
-            style={{ bottom: "calc(28% - 56px)" }}
-          >
-            <SpeakeasyDoor />
-          </div>
-
-          {/* Footer links — pinned to the very bottom, sitting on the floor */}
-          <div className="absolute left-0 right-0 bottom-6 flex items-center justify-center gap-8">
-            {[
-              { label: "Email", href: "mailto:shreya.khubber@gmail.com" },
-              { label: "LinkedIn", href: "https://linkedin.com/in/shreya-khubber" },
-              { label: "GitHub", href: "https://github.com/shreya-khubber" },
-              { label: "Instagram", href: "https://www.instagram.com/migratinglife/" },
-            ].map((link) => (
-              <a
-                key={link.label}
-                href={link.href}
-                className="text-g-mid hover:text-g-ice text-[9px] tracking-[0.2em] uppercase font-mono transition-colors duration-200"
-              >
-                {link.label}
-              </a>
-            ))}
-          </div>
-        </section>
+        <HeroSection />
+        <ExhibitsSection />
+        <SpeakeasySection />
       </div>
     </main>
+  );
+}
+
+// ── Section 1: HERO ──────────────────────────────────────────────────────
+
+function HeroSection() {
+  return (
+    <section
+      className="min-h-screen md:h-screen snap-start relative flex flex-col items-center justify-center px-6 py-24 md:py-0"
+      style={{
+        backgroundImage: `url(${BG_HERO})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+      }}
+    >
+      {/* Subtle dark scrim — keeps text legible across all bg variations */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background:
+            "linear-gradient(180deg, rgba(7,13,26,0.18) 0%, rgba(7,13,26,0.05) 35%, rgba(7,13,26,0) 60%, rgba(7,13,26,0.25) 100%)",
+        }}
+      />
+
+      <motion.header
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1, delay: 0.1 }}
+        className="relative text-center"
+      >
+        <motion.h1
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1.1, delay: 0.3, ease: [0.76, 0, 0.24, 1] }}
+          className="font-serif font-light"
+          style={{
+            fontSize: "clamp(4.5rem, 13vw, 11rem)",
+            letterSpacing: "-0.02em",
+            color: "#ffffff",
+            lineHeight: 1,
+            textShadow: "0 6px 32px rgba(0,8,24,0.55), 0 1px 4px rgba(0,8,24,0.4)",
+          }}
+        >
+          Icicle
+        </motion.h1>
+
+        <motion.div
+          initial={{ scaleX: 0 }}
+          animate={{ scaleX: 1 }}
+          transition={{ duration: 0.9, delay: 0.6, ease: [0.76, 0, 0.24, 1] }}
+          className="h-px w-28 mx-auto mt-6 mb-5 origin-left"
+          style={{
+            background: "linear-gradient(to right, transparent, rgba(255,255,255,0.85), transparent)",
+            boxShadow: "0 0 12px rgba(255,255,255,0.35)",
+          }}
+        />
+
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.8, delay: 0.8 }}
+          className="font-serif italic text-lg sm:text-xl"
+          style={{ color: "#ffffff", textShadow: SHADOW }}
+        >
+          Shreya Khubber
+        </motion.p>
+      </motion.header>
+
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.8, delay: 1.1 }}
+        className="relative text-center mt-10 px-4"
+      >
+        <p
+          className="font-serif italic text-base sm:text-lg max-w-md mx-auto leading-relaxed"
+          style={{ color: "rgba(255,255,255,0.92)", textShadow: SHADOW }}
+        >
+          &ldquo;Each work is a window into a different room of the same mind.
+          Begin anywhere.&rdquo;
+        </p>
+      </motion.div>
+
+      <motion.a
+        href="#exhibits"
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, delay: 1.4 }}
+        className="relative mt-12 group inline-flex items-center gap-3"
+        style={{
+          padding: "14px 32px",
+          border: "1px solid rgba(255,255,255,0.55)",
+          background: "rgba(255,255,255,0.06)",
+          backdropFilter: "blur(6px)",
+          color: "#ffffff",
+          fontFamily: "'JetBrains Mono', monospace",
+          fontSize: 11,
+          letterSpacing: "0.32em",
+          textTransform: "uppercase",
+          textShadow: SHADOW_SOFT,
+          transition: "background 250ms ease, border-color 250ms ease, transform 250ms ease",
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.background = "rgba(255,255,255,0.14)";
+          e.currentTarget.style.borderColor = "rgba(255,255,255,0.85)";
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.background = "rgba(255,255,255,0.06)";
+          e.currentTarget.style.borderColor = "rgba(255,255,255,0.55)";
+        }}
+      >
+        Explore my world
+        <span className="transition-transform duration-300 group-hover:translate-x-1">→</span>
+      </motion.a>
+    </section>
+  );
+}
+
+// ── Section 2: EXHIBITS ──────────────────────────────────────────────────
+
+function ExhibitsSection() {
+  return (
+    <section
+      id="exhibits"
+      className="min-h-screen md:h-screen snap-start relative flex flex-col items-center justify-center px-6 py-20 md:py-16"
+      style={{
+        backgroundImage: `url(${BG_EXHIBITS})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+      }}
+    >
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background:
+            "linear-gradient(180deg, rgba(7,13,26,0.5) 0%, rgba(7,13,26,0.2) 35%, rgba(7,13,26,0) 65%)",
+        }}
+      />
+
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: false, amount: 0.4 }}
+        transition={{ duration: 0.8, ease: [0.76, 0, 0.24, 1] }}
+        className="relative w-full max-w-6xl mb-10 md:mb-14"
+      >
+        <div className="flex items-center gap-5">
+          <div className="h-px bg-white/40 flex-1" />
+          <p
+            className="text-[10px] sm:text-[11px] tracking-[0.32em] uppercase font-mono whitespace-nowrap"
+            style={{ color: "#ffffff", textShadow: SHADOW }}
+          >
+            Exhibits to my life
+          </p>
+          <div className="h-px bg-white/40 flex-1" />
+        </div>
+      </motion.div>
+
+      <motion.div
+        initial={{ opacity: 0, y: 24 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: false, amount: 0.2 }}
+        transition={{ duration: 0.9, delay: 0.15, ease: [0.76, 0, 0.24, 1] }}
+        className="relative w-full max-w-[1500px] mx-auto"
+      >
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-5 md:gap-7 lg:gap-8">
+          {galleryPieces.map((piece, i) => (
+            <ExhibitCard key={piece.id} piece={piece} index={i} />
+          ))}
+        </div>
+      </motion.div>
+
+    </section>
+  );
+}
+
+function ExhibitCard({
+  piece,
+  index,
+}: {
+  piece: (typeof galleryPieces)[number];
+  index: number;
+}) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 24 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: false, amount: 0.15 }}
+      transition={{ duration: 0.7, delay: 0.25 + index * 0.08, ease: [0.76, 0, 0.24, 1] }}
+    >
+      <Link
+        href={piece.id === "art" ? "/gallery/art/corridor" : `/gallery/${piece.id}`}
+        className="group block"
+      >
+        <div
+          className="relative overflow-hidden transition-all duration-500"
+          style={{
+            background: "rgba(10,16,32,0.45)",
+            border: "1px solid rgba(255,255,255,0.16)",
+            backdropFilter: "blur(8px)",
+          }}
+        >
+          <div className="aspect-square overflow-hidden bg-[#0a1020]">
+            <Artwork type={piece.artworkType} />
+          </div>
+          {/* Hover spotlight */}
+          <div
+            className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+            style={{
+              background:
+                "radial-gradient(ellipse at 50% 0%, rgba(255,252,235,0.15) 0%, transparent 65%)",
+            }}
+          />
+        </div>
+
+        <div className="mt-3 sm:mt-4 px-1">
+          <h3
+            className="font-serif text-base sm:text-lg leading-tight group-hover:text-white transition-colors duration-300"
+            style={{ color: "#ffffff", textShadow: SHADOW }}
+          >
+            {piece.title}
+          </h3>
+          <p
+            className="font-serif italic text-xs sm:text-[13px] mt-1 leading-snug"
+            style={{ color: "rgba(255,255,255,0.7)", textShadow: SHADOW_SOFT }}
+          >
+            {piece.subtitle}
+          </p>
+        </div>
+      </Link>
+    </motion.div>
+  );
+}
+
+// ── Section 3: SPEAKEASY ─────────────────────────────────────────────────
+
+function SpeakeasySection() {
+  return (
+    <section
+      id="speakeasy"
+      className="min-h-screen md:h-screen snap-start relative flex flex-col px-6 md:px-12 lg:px-20 py-16 md:py-12"
+      style={{
+        backgroundImage: `url(${BG_SPEAKEASY})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+      }}
+    >
+      {/* Edge scrim — keeps text legible while the doorway in the middle
+          stays bright */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background:
+            "linear-gradient(90deg, rgba(7,13,26,0.65) 0%, rgba(7,13,26,0.15) 30%, rgba(7,13,26,0) 50%, rgba(7,13,26,0.15) 70%, rgba(7,13,26,0.65) 100%)",
+        }}
+      />
+
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: false, amount: 0.3 }}
+        transition={{ duration: 0.8 }}
+        className="relative flex-1 flex items-center w-full max-w-[1400px] mx-auto"
+      >
+        {/* Intro — sits on the left, the rest of the section shows the
+            doorway through the background image. */}
+        <div className="max-w-md md:max-w-lg">
+          <p
+            className="font-mono text-[10px] tracking-[0.4em] uppercase mb-5"
+            style={{ color: "rgba(214,178,111,0.85)", textShadow: SHADOW_SOFT }}
+          >
+            Speakeasy
+          </p>
+          <h2
+            className="font-serif font-light leading-[1.05]"
+            style={{
+              fontSize: "clamp(2.4rem, 4.6vw, 4rem)",
+              color: "#ffffff",
+              textShadow: "0 4px 22px rgba(0,8,24,0.7), 0 1px 3px rgba(0,8,24,0.5)",
+            }}
+          >
+            The Everything
+            <br />
+            Else
+          </h2>
+          <Link
+            href="/lounge"
+            className="group inline-flex items-center gap-3 mt-8"
+            style={{
+              padding: "12px 28px",
+              border: "1px solid rgba(214,178,111,0.7)",
+              background: "rgba(20,16,8,0.55)",
+              backdropFilter: "blur(6px)",
+              color: "#e8c878",
+              fontFamily: "'JetBrains Mono', monospace",
+              fontSize: 10,
+              letterSpacing: "0.32em",
+              textTransform: "uppercase",
+              transition: "background 250ms ease, border-color 250ms ease, color 250ms ease",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = "rgba(40,28,12,0.75)";
+              e.currentTarget.style.borderColor = "rgba(232,200,120,0.95)";
+              e.currentTarget.style.color = "#ffe49c";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = "rgba(20,16,8,0.55)";
+              e.currentTarget.style.borderColor = "rgba(214,178,111,0.7)";
+              e.currentTarget.style.color = "#e8c878";
+            }}
+          >
+            Step inside
+            <span className="transition-transform duration-300 group-hover:translate-x-1">→</span>
+          </Link>
+        </div>
+      </motion.div>
+
+      {/* Footer — social links pinned to bottom */}
+      <div className="relative pt-10 mt-6 border-t border-white/10">
+        <div className="flex flex-wrap items-center justify-center gap-6 md:gap-10">
+          {[
+            { label: "Email", href: "mailto:shreya.khubber@gmail.com" },
+            { label: "LinkedIn", href: "https://linkedin.com/in/shreya-khubber" },
+            { label: "GitHub", href: "https://github.com/shreya-khubber" },
+            { label: "Instagram", href: "https://www.instagram.com/migratinglife/" },
+          ].map((link) => (
+            <a
+              key={link.label}
+              href={link.href}
+              target={link.href.startsWith("http") ? "_blank" : undefined}
+              rel="noopener noreferrer"
+              className="font-mono text-[10px] tracking-[0.3em] uppercase transition-colors duration-200"
+              style={{
+                color: "rgba(255,255,255,0.6)",
+                textShadow: SHADOW_SOFT,
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.color = "rgba(232,200,120,0.95)")}
+              onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.6)")}
+            >
+              {link.label}
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
   );
 }

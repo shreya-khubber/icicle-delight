@@ -6,7 +6,6 @@ import Link from "next/link";
 import Image from "next/image";
 import dynamic from "next/dynamic";
 import { motion, AnimatePresence } from "framer-motion";
-import HamburgerMenu from "@/components/HamburgerMenu";
 import { galleryPieces } from "@/data/galleryData";
 import { PAINTINGS } from "@/data/corridorPaintings";
 
@@ -30,9 +29,6 @@ const SCROLL_HEIGHT_PX = 14000;
 
 export default function CorridorPage() {
   const router = useRouter();
-  const currentIndex = galleryPieces.findIndex((p) => p.id === "art");
-  const nextPiece = galleryPieces[(currentIndex + 1) % galleryPieces.length];
-  const prevPiece = galleryPieces[(currentIndex - 1 + galleryPieces.length) % galleryPieces.length];
 
   const [active, setActive] = useState<number | null>(null);
   const lastActiveId = useRef(PAINTINGS[0].id);
@@ -98,9 +94,8 @@ export default function CorridorPage() {
           className="fixed inset-0 overflow-hidden"
           style={{ background: "#0a1410" }}
         >
-          <HamburgerMenu />
 
-          {/* Top nav bar */}
+          {/* Top nav — Icicle back link only (Builder-style) */}
           <div
             className="absolute left-0 right-0 top-0 z-30 flex items-center justify-between"
             style={{
@@ -114,33 +109,12 @@ export default function CorridorPage() {
           >
             <Link
               href="/"
-              className="font-mono text-[10px] tracking-[0.25em] uppercase hover:opacity-70 transition-opacity"
-              style={{ color: "#7aadad" }}
+              className="font-mono text-[11px] tracking-[0.25em] uppercase hover:opacity-70 transition-opacity"
+              style={{ color: "#7aadad", fontWeight: 600 }}
             >
               &lt;- Icicle
             </Link>
-            <p
-              className="font-mono text-[10px] tracking-[0.25em] uppercase"
-              style={{ color: "#7aadad" }}
-            >
-              No. III | The Eye
-            </p>
-            <div className="flex items-center gap-6">
-              <Link
-                href={`/gallery/${prevPiece.id}`}
-                className="font-mono text-[10px] tracking-[0.2em] uppercase hover:opacity-70 transition-opacity"
-                style={{ color: "#7aadad" }}
-              >
-                &lt;- Prev
-              </Link>
-              <Link
-                href={`/gallery/${nextPiece.id}`}
-                className="font-mono text-[10px] tracking-[0.2em] uppercase hover:opacity-70 transition-opacity"
-                style={{ color: "#7aadad" }}
-              >
-                Next -&gt;
-              </Link>
-            </div>
+            <div />
           </div>
 
           {/* WebGL scene fills the viewport behind the HUD */}

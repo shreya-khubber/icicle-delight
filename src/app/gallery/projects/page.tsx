@@ -4,7 +4,6 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import HamburgerMenu from "@/components/HamburgerMenu";
 import { galleryPieces } from "@/data/galleryData";
 
 // ── Project data ──────────────────────────────────────────────────────────────
@@ -99,7 +98,6 @@ export default function BuilderPage() {
         backgroundSize: "52px 52px",
       }} />
 
-      <HamburgerMenu />
 
       {/* Nav */}
       <div style={{
