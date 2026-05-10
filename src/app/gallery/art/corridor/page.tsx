@@ -622,10 +622,6 @@ export default function CorridorPage() {
                         {l.label} <span style={{ fontSize: 7 }}>-&gt;</span>
                       </a>
                     ))}
-                    <a href="https://www.instagram.com/migratinglife/" target="_blank" rel="noopener noreferrer"
-                      style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "11px 20px", border: "1px solid rgba(201,168,76,0.28)", fontFamily: "'JetBrains Mono', monospace", fontSize: 8, letterSpacing: "0.24em", color: "rgba(201,168,76,0.7)", textTransform: "uppercase", textDecoration: "none", background: "rgba(201,168,76,0.04)" }}>
-                      @migratinglife <span style={{ fontSize: 7 }}>↗</span>
-                    </a>
                     <Link href="/contact" onClick={() => setActive(null)}
                       style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "11px 20px", border: "1px solid rgba(58,158,100,0.4)", fontFamily: "'JetBrains Mono', monospace", fontSize: 8, letterSpacing: "0.24em", color: "#8ebea0", textTransform: "uppercase", textDecoration: "none", background: "rgba(58,158,100,0.06)" }}>
                       Contact <span style={{ fontSize: 7 }}>-&gt;</span>
