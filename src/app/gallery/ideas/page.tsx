@@ -462,16 +462,10 @@ export default function WandererPage() {
       {/* Nav */}
       <div className="absolute left-0 right-0 top-0 z-30 flex items-center justify-between"
         style={{ height:40, padding:"0 40px", paddingRight:72, background:"rgba(4,3,2,0.97)", borderBottom:"1px solid rgba(201,168,76,0.14)" }}>
-        <Link href="/" style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:10, letterSpacing:"0.25em", textTransform:"uppercase", color:"#7a6a4a" }}>
+        <Link href="/" style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:11, letterSpacing:"0.25em", textTransform:"uppercase", color:"#C8A040", textDecoration:"none", fontWeight:600 }}>
           &lt;- Icicle
         </Link>
-        <p style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:10, letterSpacing:"0.25em", textTransform:"uppercase", color:"#7a6a4a" }}>
-          No. IV · The Wanderer
-        </p>
-        <div className="flex items-center gap-6">
-          <Link href={`/gallery/${prevPiece.id}`} style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:10, letterSpacing:"0.2em", textTransform:"uppercase", color:"#7a6a4a" }}>&lt;- Prev</Link>
-          <Link href={`/gallery/${nextPiece.id}`} style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:10, letterSpacing:"0.2em", textTransform:"uppercase", color:"#7a6a4a" }}>Next -&gt;</Link>
-        </div>
+        <div />
       </div>
 
       {/* Three-column library layout */}

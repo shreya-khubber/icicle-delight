@@ -3,28 +3,37 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 
-const FILMS = [
-  { title: "Parasite", year: "2019", director: "Bong Joon-ho", note: "Class warfare as architecture" },
-  { title: "Mulholland Drive", year: "2001", director: "David Lynch", note: "Dreams consuming themselves" },
-  { title: "The Grand Budapest Hotel", year: "2014", director: "Wes Anderson", note: "Nostalgia as a crime scene" },
-  { title: "Portrait of a Lady on Fire", year: "2019", director: "Céline Sciamma", note: "Looking as an act of love" },
-  { title: "Spirited Away", year: "2001", director: "Hayao Miyazaki", note: "The economy of the spirit world" },
+const CINEMA = [
+  { title: "Les Misérables", creator: "Tom Hooper", note: "revolution as grief in costume" },
+  { title: "When Life Gives You Tangerines", creator: "Kim Won-seok", note: "time is the cruelest love language" },
+  { title: "Interstellar", creator: "Christopher Nolan", note: "the math of missing someone" },
+  { title: "BoJack Horseman", creator: "Raphael Bob-Waksberg", note: "the funniest thing about despair" },
+  { title: "Black Mirror", creator: "Charlie Brooker", note: "every nightmare we built on purpose" },
 ];
 
 const BOOKS = [
-  { title: "The Remains of the Day", author: "Kazuo Ishiguro", note: "Dignity and its quiet cost" },
-  { title: "Thinking, Fast and Slow", author: "Daniel Kahneman", note: "Why we're wrong, confidently" },
-  { title: "A Little Life", author: "Hanya Yanagihara", note: "Survived it, barely" },
-  { title: "The Making of the Atomic Bomb", author: "Richard Rhodes", note: "Currently reading" },
-  { title: "Ways of Seeing", author: "John Berger", note: "How to actually look at things" },
+  { title: "Pilgrimage", author: "Paulo Coelho", note: "consciousness before it had a name" },
+  { title: "The Money Trap", author: "Alok Sama", note: "the system, undressed" },
+  { title: "The Great Gatsby", author: "F. Scott Fitzgerald", note: "the green light as a lifestyle choice" },
+  { title: "The Time Machine", author: "H.G. Wells", note: "class warfare, eventually" },
+  { title: "Wuthering Heights", author: "Emily Bronte", note: "love as a form of weather" },
 ];
 
 const SONGS = [
-  { title: "Casta Diva", artist: "Maria Callas", note: "The moon as witness" },
-  { title: "Kind of Blue", artist: "Miles Davis", note: "The sound of thinking out loud" },
-  { title: "Comptine d'un autre été", artist: "Yann Tiersen", note: "Memory made into a key" },
-  { title: "Riders on the Storm", artist: "The Doors", note: "Rain as a moral condition" },
-  { title: "Lush Life", artist: "John Coltrane", note: "Everything you've ever lost in 3 minutes" },
+  { title: "Shallow", artist: "Lady Gaga & Bradley Cooper" },
+  { title: "Those Eyes", artist: "New West" },
+  { title: "Iris", artist: "Goo Goo Dolls" },
+  { title: "Mystery of Love", artist: "Sufjan Stevens" },
+  { title: "Boulevard of Broken Dreams", artist: "Green Day" },
+  { title: "Tell the Devil I'm Busy", artist: "JD Steel" },
+];
+
+const GEEK_IDEAS = [
+  "Gravitational waves and black holes",
+  "Trying to convince myself that financial markets are not a made up thing",
+  "Detailed analysis of the movie - 'If I Can't Have Love, I Want Power'",
+  "Abstract art",
+  "How to escape Mumbai without escaping Mumbai",
 ];
 
 export default function LoungePage() {
@@ -92,7 +101,7 @@ export default function LoungePage() {
       <div className="flex-1 px-8 md:px-16 py-12 max-w-5xl mx-auto w-full">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-16 mb-16">
 
-          {/* FILMS */}
+          {/* CINEMA */}
           <motion.div
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
@@ -100,25 +109,24 @@ export default function LoungePage() {
           >
             <div className="flex items-baseline gap-3 mb-8">
               <span className="font-mono text-[8px] tracking-[0.3em] uppercase" style={{ color: "#8a6a3a" }}>01</span>
-              <h2 className="font-serif text-2xl font-light" style={{ color: "#e8e0d0" }}>Films</h2>
+              <h2 className="font-serif text-2xl font-light" style={{ color: "#e8e0d0" }}>Cinema</h2>
               <span className="font-serif text-sm italic" style={{ color: "#5a4422" }}>— the ones I return to</span>
             </div>
 
             <div className="space-y-6">
-              {FILMS.map((f, i) => (
+              {CINEMA.map((f, i) => (
                 <motion.div
                   key={i}
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ duration: 0.5, delay: 0.5 + i * 0.08 }}
                 >
-                  <div className="flex items-baseline justify-between gap-3 mb-1">
+                  <div className="flex items-baseline gap-3 mb-1">
                     <p className="font-serif text-base" style={{ color: "#d8d0c0" }}>{f.title}</p>
                     <div className="flex-1 border-b border-dashed mx-2" style={{ borderColor: "#2a2520" }}/>
-                    <span className="font-mono text-[9px] flex-shrink-0" style={{ color: "#5a4422" }}>{f.year}</span>
                   </div>
-                  <p className="font-mono text-[9px] tracking-wide" style={{ color: "#5a4530" }}>
-                    {f.director} · <span className="font-serif italic" style={{ color: "#6a5840" }}>{f.note}</span>
+                  <p className="font-mono text-xs tracking-wide" style={{ color: "#8a7050" }}>
+                    {f.creator} · <span className="font-serif italic" style={{ color: "#a08860" }}>{f.note}</span>
                   </p>
                 </motion.div>
               ))}
@@ -145,12 +153,12 @@ export default function LoungePage() {
                   animate={{ opacity: 1 }}
                   transition={{ duration: 0.5, delay: 0.6 + i * 0.08 }}
                 >
-                  <div className="flex items-baseline justify-between gap-3 mb-1">
+                  <div className="flex items-baseline gap-3 mb-1">
                     <p className="font-serif text-base" style={{ color: "#d8d0c0" }}>{b.title}</p>
                     <div className="flex-1 border-b border-dashed mx-2" style={{ borderColor: "#2a2520" }}/>
                   </div>
-                  <p className="font-mono text-[9px] tracking-wide" style={{ color: "#5a4530" }}>
-                    {b.author} · <span className="font-serif italic" style={{ color: "#6a5840" }}>{b.note}</span>
+                  <p className="font-mono text-xs tracking-wide" style={{ color: "#8a7050" }}>
+                    {b.author && <>{b.author} · </>}<span className="font-serif italic" style={{ color: "#a08860" }}>{b.note}</span>
                   </p>
                 </motion.div>
               ))}
@@ -180,16 +188,58 @@ export default function LoungePage() {
                   animate={{ opacity: 1 }}
                   transition={{ duration: 0.5, delay: 0.75 + i * 0.08 }}
                 >
-                  <div className="flex items-baseline justify-between gap-3 mb-1">
+                  <div className="flex items-baseline gap-3 mb-1">
                     <p className="font-serif text-base" style={{ color: "#d8d0c0" }}>{s.title}</p>
                     <div className="flex-1 border-b border-dashed mx-2" style={{ borderColor: "#2a2520" }}/>
                   </div>
-                  <p className="font-mono text-[9px] tracking-wide" style={{ color: "#5a4530" }}>
-                    {s.artist} · <span className="font-serif italic" style={{ color: "#6a5840" }}>{s.note}</span>
+                  <p className="font-mono text-xs tracking-wide" style={{ color: "#8a7050" }}>
+                    {s.artist}
                   </p>
                 </motion.div>
               ))}
             </div>
+          </div>
+        </motion.div>
+
+        {/* IDEAS */}
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.75, ease: [0.76, 0, 0.24, 1] }}
+        >
+          <ArtDecoDivider />
+          <div className="pt-12 pb-4">
+            <div className="flex items-baseline gap-3 mb-8">
+              <span className="font-mono text-[8px] tracking-[0.3em] uppercase" style={{ color: "#8a6a3a" }}>04</span>
+              <h2 className="font-serif text-2xl font-light" style={{ color: "#e8e0d0" }}>Ideas I Geek About</h2>
+            </div>
+
+            <div className="space-y-5 max-w-xl">
+              {GEEK_IDEAS.map((idea, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.5, delay: 0.9 + i * 0.1 }}
+                  className="flex items-start gap-4"
+                >
+                  <span className="font-mono text-[8px] mt-1.5 flex-shrink-0" style={{ color: "#5a4422" }}>
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <p className="font-serif text-base leading-relaxed" style={{ color: "#d8d0c0" }}>{idea}</p>
+                </motion.div>
+              ))}
+            </div>
+
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5, delay: 1.35 }}
+              className="font-serif text-sm italic mt-10"
+              style={{ color: "#5a4422" }}
+            >
+              If any of this is your rabbit hole too — you know where to find me.
+            </motion.p>
           </div>
         </motion.div>
       </div>
@@ -200,10 +250,10 @@ export default function LoungePage() {
       <div className="flex items-center justify-between px-8 md:px-16 py-6">
         <Link
           href="/"
-          className="font-mono text-[10px] tracking-[0.25em] uppercase transition-colors"
-          style={{ color: "#5a4422" }}
-          onMouseEnter={e => (e.currentTarget.style.color = "#8a6a3a")}
-          onMouseLeave={e => (e.currentTarget.style.color = "#5a4422")}
+          className="font-mono text-[11px] tracking-[0.25em] uppercase transition-colors font-semibold"
+          style={{ color: "#a08040" }}
+          onMouseEnter={e => (e.currentTarget.style.color = "#c8a050")}
+          onMouseLeave={e => (e.currentTarget.style.color = "#a08040")}
         >
           ← Back to Gallery
         </Link>

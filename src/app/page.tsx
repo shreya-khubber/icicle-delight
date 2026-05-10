@@ -31,10 +31,16 @@ export default function Home() {
             className="text-center px-8 pb-8"
           >
             <motion.h1
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 24 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1, delay: 0.3, ease: [0.76, 0, 0.24, 1] }}
-              className="font-serif text-6xl md:text-7xl text-g-black font-light tracking-tight mb-3"
+              transition={{ duration: 1.1, delay: 0.3, ease: [0.76, 0, 0.24, 1] }}
+              className="font-serif font-light mb-3"
+              style={{
+                fontSize: "clamp(5.5rem, 13vw, 10rem)",
+                letterSpacing: "-0.02em",
+                color: "#ffffff",
+                lineHeight: 1,
+              }}
             >
               Icicle
             </motion.h1>
@@ -50,7 +56,8 @@ export default function Home() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.8, delay: 0.8 }}
-              className="font-serif text-g-dim text-lg italic"
+              className="font-serif text-lg italic"
+              style={{ color: "rgba(255,255,255,0.88)" }}
             >
               Shreya Khubber
             </motion.p>
@@ -58,7 +65,8 @@ export default function Home() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.8, delay: 1 }}
-              className="font-mono text-g-ice text-[10px] tracking-[0.3em] uppercase mt-1"
+              className="font-mono text-[10px] tracking-[0.3em] uppercase mt-1"
+              style={{ color: "rgba(255,255,255,0.6)" }}
             >
               Finance · Code · Art · Writing · Ideas
             </motion.p>
@@ -70,7 +78,7 @@ export default function Home() {
             transition={{ duration: 0.8, delay: 1.1 }}
             className="text-center px-8 mb-14"
           >
-            <p className="font-serif text-g-dim text-base italic max-w-sm mx-auto leading-relaxed">
+            <p className="font-serif text-base italic max-w-sm mx-auto leading-relaxed" style={{ color: "rgba(255,255,255,0.82)" }}>
               &ldquo;Each work is a window into a different room of the same mind.
               Begin anywhere.&rdquo;
             </p>
@@ -83,11 +91,11 @@ export default function Home() {
             className="px-10 md:px-20 mb-12"
           >
             <div className="flex items-center gap-5">
-              <div className="h-px bg-g-ice/40 flex-1" />
-              <p id="collection" className="text-g-ice text-[9px] tracking-[0.3em] uppercase font-mono whitespace-nowrap">
+              <div className="h-px bg-white/60 flex-1" />
+              <p id="collection" className="text-[11px] tracking-[0.28em] uppercase font-mono font-semibold whitespace-nowrap" style={{ color: "rgba(255,255,255,0.95)" }}>
                 exhibits to my life
               </p>
-              <div className="h-px bg-g-ice/40 flex-1" />
+              <div className="h-px bg-white/60 flex-1" />
             </div>
           </motion.div>
 
@@ -109,9 +117,10 @@ export default function Home() {
         {/* Minimal footer — sits flush below door step */}
         <div className="flex items-center justify-center gap-8 py-4">
           {[
-            { label: "Email", href: "mailto:shreya@example.com" },
-            { label: "LinkedIn", href: "https://linkedin.com" },
-            { label: "GitHub", href: "https://github.com" },
+            { label: "Email", href: "mailto:shreya.khubber@gmail.com" },
+            { label: "LinkedIn", href: "https://linkedin.com/in/shreya-khubber" },
+            { label: "GitHub", href: "https://github.com/shreya-khubber" },
+            { label: "Instagram", href: "https://www.instagram.com/migratinglife/" },
           ].map((link) => (
             <a
               key={link.label}

@@ -692,11 +692,10 @@ export default function CareerPage() {
                 <div style={{ width:11, height:11, borderRadius:"50%", background:"#FFBD2E" }}/>
                 <div style={{ width:11, height:11, borderRadius:"50%", background:"#28C840" }}/>
               </div>
-              <a href="/" style={{ color:MUT, fontSize:10, fontFamily:F, letterSpacing:"0.18em", textDecoration:"none", opacity:.6 }}
+              <a href="/" style={{ color:AMB, fontSize:11, fontFamily:F, letterSpacing:"0.18em", textDecoration:"none", fontWeight:600 }}
                 onClick={e => e.stopPropagation()}>← icicle</a>
             </div>
             <span style={{ color:AMB, fontSize:11, letterSpacing:"0.28em", opacity:.85, fontFamily:F }}>ANALYST.WORKSPACE</span>
-            <span style={{ color:MUT, fontSize:11, letterSpacing:"0.1em", fontFamily:F }}>[1/4]</span>
           </div>
 
           <div ref={outRef} className="scn" style={{ flex:1, overflowY:"auto", padding:"18px 24px 6px", minHeight:0 }}>

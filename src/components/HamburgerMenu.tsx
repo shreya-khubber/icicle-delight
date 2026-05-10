@@ -7,8 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 const NAV_ITEMS = [
   { num: "01", label: "Home", href: "/" },
   { num: "02", label: "Speakeasy", href: "/#collection" },
-  { num: "03", label: "What Am I Doing Now", href: "/now" },
-  { num: "04", label: "Contact", href: "/contact" },
+  { num: "03", label: "Contact", href: "/contact" },
 ];
 
 function DoorKnocker({ open }: { open: boolean }) {
