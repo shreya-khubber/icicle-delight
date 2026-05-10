@@ -346,7 +346,7 @@ export default function CareerPage() {
     if (running.current) { if (tmr.current) clearTimeout(tmr.current); cancelled.current = true; }
   };
   const focus = () => requestAnimationFrame(() => inputRef.current?.focus());
-  const echo  = (cmd: string) => addLine(`ANLST:~$ ${cmd}`, AMB);
+  const echo  = (cmd: string) => addLine(`ANALYST:~$ ${cmd}`, AMB);
 
   const downloadCV = () => {
     const a = document.createElement("a");
@@ -410,7 +410,7 @@ export default function CareerPage() {
   useEffect(() => {
     if (booted.current) return;
     booted.current = true;
-    document.title = "ANLST.WORKSPACE — READY";
+    document.title = "ANALYST.WORKSPACE — READY";
     const mobile = typeof window !== "undefined" && window.innerWidth < 768;
     enqueue(mobile ? BOOT_M : BOOT, () => focus());
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -727,7 +727,7 @@ export default function CareerPage() {
           <div style={{ display:"flex", alignItems:"center", padding:"7px 20px 14px", flexShrink:0, borderTop:"1px solid #100E00" }}
             onClick={e => { e.stopPropagation(); inputRef.current?.focus(); }}>
             <span style={{ color:AMB, fontSize:"clamp(11px,1.2vw,13px)", marginRight:8, whiteSpace:"nowrap", fontFamily:F, flexShrink:0 }}>
-              ANLST:~$
+              ANALYST:~$
             </span>
             <div style={{ flex:1, display:"flex", alignItems:"center", minWidth:0, overflow:"hidden" }}>
               <input ref={inputRef} value={input}
@@ -735,9 +735,16 @@ export default function CareerPage() {
                 onKeyDown={onKey}
                 onBlur={() => { setTimeout(() => inputRef.current?.focus(), 80); }}
                 autoFocus spellCheck={false} autoComplete="off" autoCorrect="off" autoCapitalize="off"
-                style={{ flex:1, background:"transparent", border:"none", outline:"none",
+                style={{
+                  // Width tracks character count (font is monospace, so ch == one glyph).
+                  // The cursor span below is placed immediately after, so it lands at the
+                  // end of typed text instead of at the flex container's right edge.
+                  width: `${input.length}ch`,
+                  maxWidth: "100%",
+                  background:"transparent", border:"none", outline:"none",
                   color:AMB, fontFamily:F, fontSize:"clamp(11px,1.2vw,13px)",
-                  caretColor:"transparent", minWidth:0 }}/>
+                  caretColor:"transparent", minWidth:0, padding:0,
+                }}/>
               <span className="cur" style={{ flexShrink:0 }}/>
             </div>
           </div>

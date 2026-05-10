@@ -30,8 +30,8 @@ export default function GalleryFrame({ piece, index }: GalleryFrameProps) {
           >
             {/* Mat board */}
             <div className="border border-g-light p-1">
-              {/* Artwork */}
-              <div className="aspect-[4/3] overflow-hidden bg-white">
+              {/* Artwork — square aspect matches the 1254×1254 source images */}
+              <div className="aspect-square overflow-hidden bg-white">
                 <Artwork type={piece.artworkType} />
               </div>
             </div>
@@ -45,21 +45,45 @@ export default function GalleryFrame({ piece, index }: GalleryFrameProps) {
 
         {/* Plaque */}
         <div className="mt-5 text-center">
-          <p className="text-[9px] tracking-[0.28em] uppercase font-sans mb-1.5" style={{ color: "rgba(255,255,255,0.5)" }}>
+          <p
+            className="text-[9px] tracking-[0.28em] uppercase font-sans mb-1.5"
+            style={{
+              color: "rgba(0,0,0,0.7)",
+              textShadow: "0 0 4px rgba(255,255,255,0.85), 0 1px 2px rgba(255,255,255,0.6)",
+            }}
+          >
             {piece.catalogNumber}
           </p>
-          <h3 className="font-serif text-xl leading-tight group-hover:tracking-wide transition-all duration-300" style={{ color: "#ffffff" }}>
+          <h3
+            className="font-serif text-xl leading-tight group-hover:tracking-wide transition-all duration-300"
+            style={{
+              color: "#000000",
+              textShadow: "0 0 6px rgba(255,255,255,0.9), 0 1px 3px rgba(255,255,255,0.7)",
+            }}
+          >
             {piece.title}
           </h3>
-          <p className="font-serif text-sm italic mt-0.5" style={{ color: "rgba(255,255,255,0.78)" }}>
+          <p
+            className="font-serif text-sm italic mt-0.5"
+            style={{
+              color: "rgba(0,0,0,0.85)",
+              textShadow: "0 0 5px rgba(255,255,255,0.85), 0 1px 2px rgba(255,255,255,0.6)",
+            }}
+          >
             {piece.subtitle}
           </p>
           <div className="mt-3 flex items-center justify-center gap-2">
-            <div className="h-px w-5 bg-white/40" />
-            <p className="font-mono text-[9px] tracking-widest" style={{ color: "rgba(255,255,255,0.6)" }}>
+            <div className="h-px w-5 bg-black/40" />
+            <p
+              className="font-mono text-[9px] tracking-widest"
+              style={{
+                color: "rgba(0,0,0,0.7)",
+                textShadow: "0 0 4px rgba(255,255,255,0.85)",
+              }}
+            >
               {piece.period}
             </p>
-            <div className="h-px w-5 bg-white/40" />
+            <div className="h-px w-5 bg-black/40" />
           </div>
         </div>
       </Link>

@@ -3,11 +3,11 @@
 export type ArtworkType = "career" | "projects" | "art" | "ideas" | "writer";
 
 const ARTWORK_IMAGES: Record<ArtworkType, string> = {
-  career:   "/Penguin.png",
-  projects: "/Egyptian.png",
+  career:   "/Analyst.png",
+  projects: "/Builder.png",
   art:      "/Artist.png",
-  ideas:    "/Sagitarius.avif",
-  writer:   "/quill.avif",
+  ideas:    "/Wanderer.png",
+  writer:   "/Writer.png",
 };
 
 export default function Artwork({ type }: { type: ArtworkType }) {
@@ -15,7 +15,7 @@ export default function Artwork({ type }: { type: ArtworkType }) {
     <img
       src={ARTWORK_IMAGES[type]}
       alt={type}
-      className="w-full h-full object-contain"
+      className="w-full h-full object-cover"
       draggable={false}
     />
   );
