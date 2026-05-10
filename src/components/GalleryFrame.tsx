@@ -45,21 +45,21 @@ export default function GalleryFrame({ piece, index }: GalleryFrameProps) {
 
         {/* Plaque */}
         <div className="mt-5 text-center">
-          <p className="text-g-ice text-[9px] tracking-[0.28em] uppercase font-sans mb-1.5">
+          <p className="text-[9px] tracking-[0.28em] uppercase font-sans mb-1.5" style={{ color: "rgba(255,255,255,0.5)" }}>
             {piece.catalogNumber}
           </p>
-          <h3 className="font-serif text-g-black text-xl leading-tight group-hover:tracking-wide transition-all duration-300">
+          <h3 className="font-serif text-xl leading-tight group-hover:tracking-wide transition-all duration-300" style={{ color: "#ffffff" }}>
             {piece.title}
           </h3>
-          <p className="font-serif text-g-dim text-sm italic mt-0.5">
+          <p className="font-serif text-sm italic mt-0.5" style={{ color: "rgba(255,255,255,0.78)" }}>
             {piece.subtitle}
           </p>
           <div className="mt-3 flex items-center justify-center gap-2">
-            <div className="h-px w-5 bg-g-mid" />
-            <p className="font-mono text-g-mid text-[9px] tracking-widest">
+            <div className="h-px w-5 bg-white/40" />
+            <p className="font-mono text-[9px] tracking-widest" style={{ color: "rgba(255,255,255,0.6)" }}>
               {piece.period}
             </p>
-            <div className="h-px w-5 bg-g-mid" />
+            <div className="h-px w-5 bg-white/40" />
           </div>
         </div>
       </Link>

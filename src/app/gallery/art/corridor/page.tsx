@@ -333,7 +333,6 @@ function ReducedLayout() {
     <div className="min-h-screen" style={{ background: "#111a14" }}>
       <HamburgerMenu />
       <div className="max-w-2xl mx-auto px-10 pb-20" style={{ paddingTop: 80 }}>
-        <p className="font-mono text-[9px] tracking-[0.3em] uppercase mb-4" style={{ color: "#7aadad" }}>No. III - The Eye</p>
         <h1 className="font-serif text-4xl font-light mb-2" style={{ color: "#e8dcc8" }}>{piece.title}</h1>
         <p className="font-serif italic mb-10" style={{ color: "#7aadad" }}>{piece.subtitle}</p>
         {piece.panel.sections.map((s, i) => (
@@ -421,28 +420,10 @@ export default function CorridorPage() {
             className="absolute left-0 right-0 top-0 z-30 flex items-center justify-between"
             style={{ height: 40, padding: "0 40px", paddingRight: 72, background: "rgba(9,15,12,0.97)", borderBottom: "1px solid rgba(201,168,76,0.18)" }}
           >
-            <Link href="/" className="font-mono text-[10px] tracking-[0.25em] uppercase hover:opacity-70 transition-opacity" style={{ color: "#7aadad" }}>
+            <Link href="/" className="font-mono text-[11px] tracking-[0.25em] uppercase transition-opacity" style={{ color: "#7aadad", fontWeight: 600 }}>
               &lt;- Icicle
             </Link>
-            <p className="font-mono text-[10px] tracking-[0.25em] uppercase" style={{ color: "#7aadad" }}>
-              No. III | The Eye
-            </p>
-            <div className="flex items-center gap-6">
-              <Link
-                href={`/gallery/${prevPiece.id}`}
-                className="font-mono text-[10px] tracking-[0.2em] uppercase hover:opacity-70 transition-opacity"
-                style={{ color: "#7aadad" }}
-              >
-                &lt;- Prev
-              </Link>
-              <Link
-                href={`/gallery/${nextPiece.id}`}
-                className="font-mono text-[10px] tracking-[0.2em] uppercase hover:opacity-70 transition-opacity"
-                style={{ color: "#7aadad" }}
-              >
-                Next -&gt;
-              </Link>
-            </div>
+            <div />
           </div>
 
           {/* â"€â"€ 3-D WORLD â€" transform updated directly via ref, no React re-render â"€â"€ */}

@@ -105,7 +105,7 @@ export const galleryPieces: GalleryPiece[] = [
         },
       ],
       links: [
-        { label: "Instagram", href: "https://instagram.com/" },
+        { label: "Instagram", href: "https://www.instagram.com/migratinglife/" },
       ],
     },
   },

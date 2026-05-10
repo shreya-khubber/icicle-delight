@@ -108,20 +108,10 @@ export default function BuilderPage() {
         padding: "0 40px", paddingRight: 72,
         background: "rgba(12,10,8,0.97)", borderBottom: "1px solid rgba(200,112,32,0.14)",
       }}>
-        <Link href="/" style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 10, letterSpacing: "0.25em", textTransform: "uppercase", color: "#6A5438", textDecoration: "none" }}>
+        <Link href="/" style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 11, letterSpacing: "0.25em", textTransform: "uppercase", color: "#C87828", textDecoration: "none", fontWeight: 600 }}>
           &lt;- Icicle
         </Link>
-        <p style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 10, letterSpacing: "0.25em", textTransform: "uppercase", color: "#6A5438" }}>
-          No. II · The Builder
-        </p>
-        <div style={{ display: "flex", gap: 24 }}>
-          <Link href={`/gallery/${prevPiece.id}`} style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 10, letterSpacing: "0.2em", textTransform: "uppercase", color: "#6A5438", textDecoration: "none" }}>
-            &lt;- Prev
-          </Link>
-          <Link href={`/gallery/${nextPiece.id}`} style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 10, letterSpacing: "0.2em", textTransform: "uppercase", color: "#6A5438", textDecoration: "none" }}>
-            Next -&gt;
-          </Link>
-        </div>
+        <div />
       </div>
 
       {/* Content */}
@@ -134,9 +124,6 @@ export default function BuilderPage() {
           transition={{ duration: 0.65, ease: [0.76, 0, 0.24, 1] }}
           style={{ marginBottom: 72 }}
         >
-          <p style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 9, letterSpacing: "0.38em", color: "rgba(200,112,32,0.5)", textTransform: "uppercase", marginBottom: 18 }}>
-            No. II - The Builder
-          </p>
           <h1 style={{ fontFamily: "'Editorial New',Georgia,serif", fontSize: "clamp(38px,5.5vw,68px)", color: "#EAE2D2", fontWeight: 400, lineHeight: 1.04, letterSpacing: "-0.01em", marginBottom: 22 }}>
             Things I&apos;m building.
           </h1>

@@ -43,7 +43,7 @@ export default function ExhibitPage({ params }: { params: { id: string } }) {
       >
           <Link
             href="/"
-            className="font-mono text-g-mid hover:text-g-ice text-[10px] tracking-[0.25em] uppercase transition-colors flex items-center gap-2"
+            className="font-mono text-g-dark hover:text-g-ice text-[11px] tracking-[0.25em] uppercase transition-colors flex items-center gap-2 font-medium"
           >
             <span>←</span> Icicle
           </Link>
@@ -60,20 +60,7 @@ export default function ExhibitPage({ params }: { params: { id: string } }) {
             ))}
           </div>
 
-          <div className="flex items-center gap-6">
-            <Link
-              href={`/gallery/${prevPiece.id}`}
-              className="font-mono text-g-mid hover:text-g-ice text-[10px] tracking-[0.2em] uppercase transition-colors"
-            >
-              ← Prev
-            </Link>
-            <Link
-              href={`/gallery/${nextPiece.id}`}
-              className="font-mono text-g-mid hover:text-g-ice text-[10px] tracking-[0.2em] uppercase transition-colors"
-            >
-              Next →
-            </Link>
-          </div>
+          <div className="w-24" />
       </div>
 
       {/* Push content below fixed ceiling (88px) + subnav (40px) */}
@@ -89,10 +76,6 @@ export default function ExhibitPage({ params }: { params: { id: string } }) {
           transition={{ duration: 0.9, ease: [0.76, 0, 0.24, 1] }}
           className="lg:w-[42%] border-r border-g-light/50 px-10 md:px-16 py-16 flex flex-col"
         >
-          {/* Catalog number */}
-          <p className="font-mono text-g-mid text-[9px] tracking-[0.3em] uppercase mb-6">
-            {piece.catalogNumber} of IV
-          </p>
 
           {/* Title block */}
           <div className="mb-8">
@@ -210,8 +193,7 @@ export default function ExhibitPage({ params }: { params: { id: string } }) {
 
             {/* Floor plaque */}
             <div className="mt-6 text-center">
-              <p className="font-mono text-g-mid text-[9px] tracking-[0.3em] uppercase">{piece.catalogNumber}</p>
-              <p className="font-serif text-g-dark text-xl mt-1">{piece.title}</p>
+              <p className="font-serif text-g-dark text-xl">{piece.title}</p>
               <p className="font-serif text-g-dim text-sm italic">{piece.shortDescription}</p>
             </div>
           </div>
@@ -227,34 +209,12 @@ export default function ExhibitPage({ params }: { params: { id: string } }) {
       <div className="h-px bg-g-light" />
 
       {/* Bottom nav */}
-      <div className="flex items-center justify-between px-10 md:px-16 py-5 border-t border-g-light/40">
-        <Link
-          href={`/gallery/${prevPiece.id}`}
-          className="group flex items-center gap-3 font-sans text-g-dim hover:text-g-black text-sm transition-colors"
-        >
-          <span className="text-lg transition-transform group-hover:-translate-x-1">←</span>
-          <div>
-            <p className="font-mono text-[8px] tracking-widest text-g-mid uppercase">Previous</p>
-            <p className="font-serif italic">{prevPiece.title}</p>
-          </div>
-        </Link>
-
+      <div className="flex items-center justify-center px-10 md:px-16 py-5 border-t border-g-light/40">
         <Link
           href="/"
-          className="font-mono text-g-mid hover:text-g-black text-[10px] tracking-[0.25em] uppercase transition-colors"
+          className="font-mono text-g-dark hover:text-g-ice text-[11px] tracking-[0.25em] uppercase transition-colors font-medium"
         >
-          All Works
-        </Link>
-
-        <Link
-          href={`/gallery/${nextPiece.id}`}
-          className="group flex items-center gap-3 font-sans text-g-dim hover:text-g-black text-sm transition-colors text-right"
-        >
-          <div>
-            <p className="font-mono text-[8px] tracking-widest text-g-mid uppercase">Next</p>
-            <p className="font-serif italic">{nextPiece.title}</p>
-          </div>
-          <span className="text-lg transition-transform group-hover:translate-x-1">→</span>
+          ← All Works
         </Link>
       </div>
     </div>

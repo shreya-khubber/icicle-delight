@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import HamburgerMenu from "@/components/HamburgerMenu";
-import { galleryPieces } from "@/data/galleryData";
 
 // ── Page data ─────────────────────────────────────────────────────────────────
 
@@ -778,9 +777,6 @@ function CoverFront({ side }: { side: "left" | "right" }) {
       background: "linear-gradient(160deg, #f5e8c5 0%, #e8d5a0 100%)",
     }}>
       <div style={{ width: 60, height: 1, background: "#8a6a3a", marginBottom: 24 }} />
-      <p style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 11, letterSpacing: "0.3em", color: "#8a6a3a", textTransform: "uppercase", marginBottom: 18 }}>
-        No. V
-      </p>
       <p style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 42, color: "#2a1606", fontWeight: 300, lineHeight: 1.1, textAlign: "center", letterSpacing: "0.05em", marginBottom: 10 }}>
         The Writer
       </p>
@@ -1083,9 +1079,6 @@ function MobilePageContent({ page }: { page: PageData }) {
 
 export default function WriterPage() {
   const router = useRouter();
-  const ci = galleryPieces.findIndex((p) => p.id === "writer");
-  const nextPiece = galleryPieces[(ci + 1) % galleryPieces.length];
-  const prevPiece = galleryPieces[(ci - 1 + galleryPieces.length) % galleryPieces.length];
 
   const [state, setState] = useState(0);  // 0=cover, 1–MAX_STATE=spreads
   const [flipDir, setFlipDir] = useState<"forward" | "backward" | null>(null);
@@ -1093,20 +1086,21 @@ export default function WriterPage() {
   const [hoveredSide, setHoveredSide] = useState<"left" | "right" | null>(null);
   const [flipHover, setFlipHover] = useState<"left" | "right" | null>(null);
   const [bookScale, setBookScale] = useState(1);
+  const [isMobile, setIsMobile] = useState(false);
   const [showMobileToc, setShowMobileToc] = useState(false);
   const [mobilePage, setMobilePage] = useState(0); // 0=cover, 1..MOBILE_PAGES.length
   const touchStartX = useRef<number | null>(null);
 
   const isAnimating = flipDir !== null;
-  const isMobile = bookScale < 0.88;
   const mobileSpread = mobilePage === 0 ? 0 : Math.ceil((MOBILE_PAGES[mobilePage - 1]?.n ?? 0) / 2);
 
-  // Responsive scaling
+  // Responsive scaling — isMobile uses width only so tall-but-narrow laptops don't trigger it
   useEffect(() => {
     const update = () => {
       const sw = (window.innerWidth - 20) / 800;
       const sh = (window.innerHeight - 80) / 700;
       setBookScale(Math.min(1, sw, sh));
+      setIsMobile(window.innerWidth < 768);
     };
     update();
     window.addEventListener("resize", update);
@@ -1198,29 +1192,18 @@ export default function WriterPage() {
       {/* Nav */}
       <div className="absolute left-0 right-0 top-0 z-30 flex items-center justify-between"
         style={{ height: 40, padding: "0 16px", paddingRight: 72, background: "rgba(4,8,5,0.97)", borderBottom: "1px solid rgba(201,140,40,0.14)", gap: 8 }}>
-        <Link href="/" style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 10, letterSpacing: "0.2em", textTransform: "uppercase", color: "#7a6a3a", flexShrink: 0 }}>
+        <Link href="/" style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 11, letterSpacing: "0.2em", textTransform: "uppercase", color: "#C8A030", textDecoration: "none", flexShrink: 0, fontWeight: 600 }}>
           &lt;- Icicle
         </Link>
-        {isMobile ? (
+        {isMobile && (
           <button
             onClick={() => setShowMobileToc(true)}
             style={{ all: "unset", cursor: "pointer", fontFamily: "'JetBrains Mono',monospace", fontSize: 10, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(201,160,60,0.75)", border: "1px solid rgba(201,140,40,0.3)", borderRadius: 3, padding: "3px 10px" }}
           >
             Contents
           </button>
-        ) : (
-          <p style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 10, letterSpacing: "0.25em", textTransform: "uppercase", color: "#7a6a3a" }}>
-            No. V · The Writer
-          </p>
         )}
-        <div className="flex items-center gap-4" style={{ flexShrink: 0 }}>
-          <Link href={`/gallery/${prevPiece.id}`} style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 10, letterSpacing: "0.2em", textTransform: "uppercase", color: "#7a6a3a" }}>
-            &lt;- Prev
-          </Link>
-          <Link href={`/gallery/${nextPiece.id}`} style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 10, letterSpacing: "0.2em", textTransform: "uppercase", color: "#7a6a3a" }}>
-            Next -&gt;
-          </Link>
-        </div>
+        <div />
       </div>
 
       {/* ── Mobile: single-page view ── */}
@@ -1253,7 +1236,6 @@ export default function WriterPage() {
               /* Cover */
               <div style={{ minHeight: "100%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 14, padding: "48px 32px" }}>
                 <div style={{ width: 40, height: 1, background: "#8a6a3a" }} />
-                <p style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 9, letterSpacing: "0.32em", color: "#8a6a3a", textTransform: "uppercase" }}>No. V</p>
                 <p style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 40, color: "#2a1606", fontWeight: 300, lineHeight: 1.1, textAlign: "center", letterSpacing: "0.04em" }}>The Writer</p>
                 <p style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 16, fontStyle: "italic", color: "#6a4a1e" }}>Articles &amp; Poems</p>
                 <div style={{ width: 40, height: 1, background: "#8a6a3a" }} />

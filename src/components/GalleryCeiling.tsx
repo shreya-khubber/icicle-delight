@@ -105,14 +105,16 @@ export default function GalleryCeiling() {
       className="fixed top-0 left-0 right-0 pointer-events-none"
       style={{ height: CEILING_H, zIndex: 30, overflow: "visible" }}
     >
-      {/* Ceiling band */}
+      {/* Ceiling band — frosted glass so the video shows through */}
       <div
         className="absolute top-0 left-0 right-0 border-b"
         style={{
           height: CEILING_H,
-          backgroundColor: "rgba(255,255,255,1)",
-          borderColor: scrolled ? "rgba(180,178,172,0.6)" : "rgba(220,218,212,0.5)",
-          boxShadow: scrolled ? "0 1px 24px rgba(0,0,0,0.06)" : "none",
+          backgroundColor: "rgba(255,255,255,0.22)",
+          backdropFilter: "blur(18px)",
+          WebkitBackdropFilter: "blur(18px)",
+          borderColor: scrolled ? "rgba(180,178,172,0.4)" : "rgba(220,218,212,0.25)",
+          boxShadow: scrolled ? "0 1px 24px rgba(0,0,0,0.04)" : "none",
           transition: "border-color 0.4s, box-shadow 0.4s",
         }}
       />
