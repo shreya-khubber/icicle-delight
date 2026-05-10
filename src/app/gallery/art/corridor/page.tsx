@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import HamburgerMenu from "@/components/HamburgerMenu";
 import { galleryPieces } from "@/data/galleryData";
@@ -194,11 +195,15 @@ function CorridorPainting({
               boxShadow: "0 12px 28px rgba(0,0,0,0.35)",
             }}
           >
-            <img
+            <Image
               src={painting.src}
               alt={`Painting ${painting.id}`}
+              width={painting.width}
+              height={painting.height}
               draggable={false}
-              style={{ width: "100%", height: "100%", maxWidth: "min(72vw, 980px)", maxHeight: "calc(100vh - 150px)", objectFit: "contain", objectPosition: "center center", display: "block", filter: "drop-shadow(0 28px 42px rgba(0,0,0,0.45))" }}
+              sizes="320px"
+              quality={70}
+              style={{ width: "100%", height: "100%", objectFit: "contain", objectPosition: "center center", display: "block", filter: "drop-shadow(0 28px 42px rgba(0,0,0,0.45))" }}
             />
           </div>
           {/* Hover overlay â€" pure CSS, no JS */}
@@ -574,10 +579,15 @@ export default function CorridorPage() {
                       padding: 0, background: "transparent",
                     }}
                   >
-                    <img
+                    <Image
                       src={activePainting.src}
                       alt={`${panel.heading} - Painting ${activePainting.id}`}
+                      width={activePainting.width}
+                      height={activePainting.height}
                       draggable={false}
+                      sizes="(max-width: 768px) 92vw, 65vw"
+                      quality={85}
+                      priority
                       style={{ width: "100%", height: "100%", maxWidth: "min(68vw, 1100px)", maxHeight: "calc(100vh - 120px)", objectFit: "contain", objectPosition: "center center", display: "block", filter: "drop-shadow(0 30px 48px rgba(0,0,0,0.48))" }}
                       onError={(e) => { (e.target as HTMLImageElement).style.opacity = "0"; }}
                     />
