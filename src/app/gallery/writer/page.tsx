@@ -862,12 +862,12 @@ function BookIndex({ state, onJump }: { state: number; onJump: (s: number) => vo
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
-      padding: "0 28px",
+      padding: "0 16px",
       background: "rgba(8, 5, 2, 0.48)",
       backdropFilter: "blur(14px)",
       WebkitBackdropFilter: "blur(14px)",
     }}>
-      <div style={{ display: "flex", flexDirection: "column", maxWidth: 260, width: "100%", overflowY: "auto", maxHeight: "calc(100vh - 100px)", scrollbarWidth: "none" }}>
+      <div style={{ display: "flex", flexDirection: "column", maxWidth: 168, width: "100%", overflowY: "auto", maxHeight: "calc(100vh - 100px)", scrollbarWidth: "none" }}>
         <p style={{
           fontFamily: "'JetBrains Mono',monospace",
           fontSize: 9,
@@ -1282,7 +1282,7 @@ export default function WriterPage() {
         <div className="absolute inset-0 flex items-center justify-center" style={{ paddingTop: 40, zIndex: 2 }}>
 
           {/* Left overlay — book index */}
-          <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: 280, zIndex: 5, display: "flex", flexDirection: "column" }}>
+          <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: 200, zIndex: 5, display: "flex", flexDirection: "column" }}>
             <BookIndex state={state} onJump={jumpTo} />
           </div>
 
@@ -1350,7 +1350,7 @@ export default function WriterPage() {
           </div>{/* /book wrapper */}
 
           {/* Right overlay — margin panel */}
-          <div style={{ position: "absolute", right: 0, top: 0, bottom: 0, width: 280, zIndex: 5, display: "flex", flexDirection: "column" }}>
+          <div style={{ position: "absolute", right: 0, top: 0, bottom: 0, width: 200, zIndex: 5, display: "flex", flexDirection: "column" }}>
             <MarginPanel
               page={state > 0 ? (hoveredSide === "left" ? getLeftPage(state) : hoveredSide === "right" ? getRightPage(state) : null) : null}
               visible={hoveredSide !== null && state > 0}
