@@ -63,6 +63,10 @@ const ANTHILL_B = [
   "Led assessment of 350+ India-based startups for Lumos Health, Anthill's healthtech arm; boosted sourcing pipeline by 13%",
   "Engaged with 30+ startups to evaluate business model viability and clinical authenticity in partnership with HCG Global",
 ];
+const CONQUEST = [
+  "Led a team of 4 to secure partnerships worth $100K for portfolio startups with global SaaS and product enterprises",
+  "Onboarded 20+ companies like Freshworks, Mixpanel, and Notion, offering complimentary access to their startup programs",
+];
 const AI_B = [
   "Explored building a Shopify-like PMS with AI note-taking for therapists, validated through 15+ practitioner interviews",
   "Uncovered structural barriers (confidentiality norms, AI adoption resistance, nonviable business model); discontinued",
@@ -141,6 +145,7 @@ const SECTIONS: SectionData[] = [
       { id: "webid",      filename: "webid.log",              company: "WebID, Germany",    title: "Freelance Market Research & BD Consultant", dates: "Freelance",                            bullets: WEBID_B },
       { id: "worldquant", filename: "worldquant.log",         company: "WorldQuant Brain",  title: "Research Consultant",                       dates: "Apr – Jul 2023",                       bullets: WQ_B },
       { id: "anthill",    filename: "anthill.log",            company: "Anthill Ventures",  title: "Investment Analyst Intern",                 dates: "Jun – Aug 2022",                       bullets: ANTHILL_B },
+      { id: "conquest",   filename: "conquest.log",           company: "Conquest",          title: "Partnerships Lead",                         dates: "Jan 2022– Aug 2022",                       bullets: CONQUEST }
     ],
   },
   {
