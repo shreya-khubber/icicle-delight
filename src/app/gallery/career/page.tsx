@@ -1,773 +1,625 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 
-// ── Theme ─────────────────────────────────────────────────────────────────────
-const F   = '"Geist Mono","Fira Code","JetBrains Mono",monospace';
-const AMB = "#FFB300";
-const MUT = "#8A7040";
-const ERR = "#FF4444";
-const OK  = "#4AFF91";
-const DIM = "#2A2000";
-const TXT = "#C8A840";
+// ─── Theme ────────────────────────────────────────────────────────────────────
+const BG   = "#0e0b06";
+const BG2  = "#120e08";
+const BORD = "rgba(160,110,40,0.2)";
+const TXT  = "#c8a840";
+const MUT  = "#8a6a30";
+const DIM  = "#3a2c14";
+const ACC  = "#ffb300";
+const YELL = "#ff6600";
+const F    = '"JetBrains Mono","Fira Code","Courier New",monospace';
+const FS   = '"DM Sans","Inter",system-ui,sans-serif';
 
-// ── Types ─────────────────────────────────────────────────────────────────────
-type SL = { t: string; c?: string; href?: string };
-type OL = { id: number; t: string; c: string; href?: string };
-type Preview =
-  | "none" | "whoami" | "ls" | "experience" | "projects"
-  | "morningstar" | "morningstar-intern" | "webid" | "worldquant" | "anthill"
-  | "ai-research" | "trunagrik" | "allcargo" | "v-guard"
-  | "skills" | "toolkit" | "contact";
+type BootPhase = "playing" | "collapsing" | "done";
+type BLine = { tag: string; msg: string; color: string; dots?: string; special?: "think" | "done" };
 
-let _id = 0;
-const uid = () => ++_id;
+const sleep = (ms: number) => new Promise<void>(r => setTimeout(r, ms));
 
-// ── Bullets ───────────────────────────────────────────────────────────────────
-const MSTAR_BULLETS = [
-  "Constructed LSTA US Leveraged Loan Broad Select Index (benchmark for BlackRock iShares ETF)",
-  "Delivered 7+ simulations in 10 days for the institutional launch",
+// ─── Boot lines ───────────────────────────────────────────────────────────────
+const BOOT_DEF: Omit<BLine, "dots">[] = [
+  { tag: "[INIT]",  msg: "ANALYST.WORKSPACE v2.4 booting...",                                        color: MUT },
+  { tag: "[OK]",    msg: "Locating Shreya Khubber... found (eventually)",                            color: TXT },
+  { tag: "[OK]",    msg: "Mounting degree: Electronics & Instrumentation + Finance, BITS Pilani",    color: TXT },
+  { tag: "[OK]",    msg: "Loading certification: CFA Level 2 candidate, exam anxiety suppressed",    color: TXT },
+  { tag: "[OK]",    msg: "Indexing skills: Excel, SQL, Python, PowerPoint, pivot tables at 2am",     color: TXT },
+  { tag: "[SCAN]",  msg: "Scanning for dependencies...",                                              color: MUT },
+  { tag: "[WARN]",  msg: "Chai dependency detected: critical, non-negotiable, do not remove",        color: YELL },
+  { tag: "[OK]",    msg: "Chai loaded. Proceeding.",                                                  color: TXT },
+  { tag: "[OK]",    msg: "Importing 2 years of fixed income & finance experience",                   color: TXT },
+  { tag: "[OK]",    msg: "Loading bond universe: yields, spreads, duration, the occasional default", color: TXT },
+  { tag: "[OK]",    msg: "Cross-referencing numbers that were definitely right the first time",       color: TXT },
+  { tag: "[THINK]", msg: "Reconciling model with reality",                                            color: MUT, special: "think" },
+  { tag: "[OK]",    msg: "Close enough.",                                                             color: TXT },
+  { tag: "[DONE]",  msg: "Workspace ready. Welcome.",                                                 color: ACC, special: "done" },
+];
+
+// ─── Content data ─────────────────────────────────────────────────────────────
+const MSTAR_B = [
+  "Constructed LSTA US Leveraged Loan Broad Select Index (benchmark for BlackRock iShares ETF), delivering 7+ simulations in 10 days for the institutional launch",
   "Analyzed $1.2T global CLO market: securitization, valuation, trading dynamics",
-  "Led distressed loan recovery index research — signals from rating, seniority, bid price",
+  "Led distressed loan recovery index research: signals from rating, seniority, bid price",
   "Engineered leveraged loan index infrastructure and forward curve analytics (10+ data sources)",
   "Launched US Leveraged Term Loan Index and Korea 1–20 Yr Treasury Bond Index",
 ];
-const MSTAR_INTERN_BULLETS = [
+const MSTAR_INT_B = [
   "Designed internal automation Python modules for snapshot analysis, portfolio active weight analysis, and bond issuer capping",
-  "Created the US High Yield Distressed Bonds Index — option-adjusted spread filters enhanced 3-yr index levels by 14%",
+  "Created the US High Yield Distressed Bonds Index; option-adjusted spread filters enhanced 3-yr index levels by 14%",
 ];
-const WEBID_BULLETS = [
+const WEBID_B = [
   "Translated market insights into go-to-market strategy for India expansion",
   "Conducted 20+ primary interviews with KYC industry CXOs and senior government officials",
   "Identified market entry price points and competitive positioning",
   "Generated 7+ early-stage client leads through targeted outreach",
 ];
-const WORLDQUANT_BULLETS = [
+const WQ_B = [
   "Ranked 297th out of 27K+ global users as a Research Consultant, eligible for compensation for quant trading algorithms",
-  "Backtested and enhanced performance for 27 Alphas — quantitative strategies integrating fundamental and technical analysis",
+  "Backtested and enhanced performance for 27 Alphas, quantitative strategies integrating fundamental and technical analysis",
 ];
-const ANTHILL_BULLETS = [
-  "Led assessment of 350+ India-based startups for Lumos Health, Anthill's healthtech arm — boosted sourcing pipeline by 13%",
+const ANTHILL_B = [
+  "Led assessment of 350+ India-based startups for Lumos Health, Anthill's healthtech arm; boosted sourcing pipeline by 13%",
   "Engaged with 30+ startups to evaluate business model viability and clinical authenticity in partnership with HCG Global",
 ];
-const AI_BULLETS = [
+const AI_B = [
   "Explored building a Shopify-like PMS with AI note-taking for therapists, validated through 15+ practitioner interviews",
-  "Uncovered structural barriers — confidentiality norms, AI adoption resistance, nonviable business model — discontinued",
+  "Uncovered structural barriers (confidentiality norms, AI adoption resistance, nonviable business model); discontinued",
 ];
-const TRUNAGRIK_BULLETS = [
+const TRUN_B = [
   "Ranked Top 50 of 6,000+ startups at Zerodha x Ditto Pitch Perfect for self-sovereign identity platform prototype",
-  "Built using Zero Knowledge Proofs and verifiable credentials for re-usable KYC amongst financial institutions",
-  "Researched India's Aadhaar system, CKYCs, CERSAI registry and KYC regulatory landscape — identified barriers to adoption",
+  "Zero Knowledge Proofs and verifiable credentials for re-usable KYC amongst financial institutions",
+  "Researched India's Aadhaar system, CKYCs, CERSAI registry and KYC regulatory landscape; identified barriers to adoption",
 ];
-const ALLCARGO_BULLETS = [
+const ALLCARGO_B = [
   "Evaluated market reactions in 5-yr stock price history to identify highs and lows, stock splits, M&A and dividend policy changes",
 ];
-const VGUARD_BULLETS = [
+const VGUARD_B = [
   "Analyzed 10 yr macroeconomic and company-specific insights from MD&A report to highlight major trends in business strategy",
   "Performed SWOT and competitor analysis to correlate 5% YoY stock price growth (FY 21-22) with major management decisions",
 ];
-
-
-// ── Terminal content ──────────────────────────────────────────────────────────
-const BOOT: SL[] = [
-  { t: "initializing analyst.workspace v2.1...",                   c: MUT },
-  { t: "loading node: MORNINGSTAR.QUANT [ok]",                     c: MUT },
-  { t: "mounting index: LSTA_US_LEVERAGED_LOAN_BROAD_SELECT [ok]", c: MUT },
-  { t: "analyst.workspace ready — type 'help' to begin",           c: OK  },
+const TMD_B = [
+  "Demonstrated the impact of a tuned mass damper in skyscrapers using Arduino Uno, an Accelerometer module and MATLAB",
+  "Calibrated the system to reduce earthquake-induced vibrations, achieving stability 18% faster, leading to minimised damages",
 ];
-const BOOT_M: SL[] = [
-  { t: "initializing analyst.workspace v2.1...", c: MUT },
-  { t: "loading MORNINGSTAR.QUANT [ok]",         c: MUT },
-  { t: "ready — type 'help' to begin",           c: OK  },
+const EV_B = [
+  "Compiled a detailed report by surveying 1000+ individuals to understand sentiment towards EV Charging Infrastructure in India",
 ];
-
-const HELP: SL[] = [
-  { t: "ANALYST.WORKSPACE — command reference",         c: AMB },
-  { t: "──────────────────────────────────────────────", c: DIM },
-  { t: "  help                   this message",         c: TXT },
-  { t: "  whoami                 short bio",            c: TXT },
-  { t: "  ls                     list workspace",       c: TXT },
-  { t: "  cat experience         all roles (summary)",  c: TXT },
-  { t: "  open [role]            full detail for role", c: TXT },
-  { t: "    roles: morningstar, morningstar-intern,",   c: MUT },
-  { t: "            webid, worldquant, anthill",        c: MUT },
-  { t: "  cat projects           all projects",         c: TXT },
-  { t: "  open [project]         project deep-dive",    c: TXT },
-  { t: "    projects: trunagrik, ai-research,",         c: MUT },
-  { t: "              allcargo, v-guard",               c: MUT },
-  { t: "  cat skills             skill matrix",         c: TXT },
-  { t: "  cat toolkit.sql        tech stack as SQL",    c: TXT },
-  { t: "  cd contact             contact + CV",         c: TXT },
-  { t: "  download cv            download resume PDF",  c: TXT },
-  { t: "  history                session log",          c: TXT },
-  { t: "  clear                  clear terminal",       c: TXT },
-  { t: "──────────────────────────────────────────────", c: DIM },
-];
-
-const WHOAMI: SL[] = [
-  { t: "Quant analyst at Morningstar, Mumbai. I build fixed income indexes —",     c: TXT },
-  { t: "the kind institutional money actually tracks. Current focus: leveraged",   c: TXT },
-  { t: "loan benchmarks, CLO market research, and index methodology. Previously:", c: TXT },
-  { t: "freelance market research for a European fintech (WebID) in KYC space.",   c: TXT },
-  { t: "Finance, code, art — in that order, usually.",                             c: AMB },
-];
-
-const LS: SL[] = [
-  { t: "analyst.workspace/",            c: AMB },
-  { t: "├── experience/",               c: TXT },
-  { t: "│   ├── morningstar-quant.log", c: MUT },
-  { t: "│   ├── morningstar-intern.log",c: MUT },
-  { t: "│   ├── webid.log",             c: MUT },
-  { t: "│   ├── worldquant.log",        c: MUT },
-  { t: "│   └── anthill.log",           c: MUT },
-  { t: "├── projects/",                 c: TXT },
-  { t: "│   ├── trunagrik.md",          c: MUT },
-  { t: "│   ├── ai-mental-health.md",   c: MUT },
-  { t: "│   ├── allcargo.pdf",          c: MUT },
-  { t: "│   └── v-guard.pdf",           c: MUT },
-  { t: "├── skills.csv",                c: TXT },
-  { t: "├── toolkit.sql",               c: TXT },
-  { t: "└── contact.md",                c: TXT },
-];
-
-const EXP_SUMMARY: SL[] = [
-  { t: "[EXPERIENCE] ──────────────────────────────────────────", c: AMB },
-  { t: "MORNINGSTAR       Quantitative Analyst       Jul 2024–Present  [ACTIVE]", c: TXT },
-  { t: "MORNINGSTAR       Fixed Income Intern         Jul–Dec 2023",              c: TXT },
-  { t: "WEBID — GERMANY   Market Research Consult.   Freelance 2025",            c: TXT },
-  { t: "WORLDQUANT BRAIN  Research Consultant         Apr–Jul 2023",             c: TXT },
-  { t: "ANTHILL VENTURES  Investment Analyst Intern   Jun–Aug 2022",             c: TXT },
-  { t: "──────────────────────────────────────────────────────────", c: DIM },
-  { t: "type 'open [firm]' for full detail", c: MUT },
-];
-
-const mkRole = (header: string, bullets: string[]): SL[] => [
-  { t: header, c: AMB },
-  { t: "──────────────────────────────────────────────────────────", c: DIM },
-  ...bullets.map(b => ({ t: `> ${b}`, c: TXT })),
-];
-
-const MSTAR_SL       = mkRole("[MORNINGSTAR] Quantitative Analyst — Jul 2024–Present",            MSTAR_BULLETS);
-const MSTAR_INTERN_SL= mkRole("[MORNINGSTAR] Fixed Income Indexes Intern — Jul–Dec 2023",          MSTAR_INTERN_BULLETS);
-const WEBID_SL       = mkRole("[WEBID — GERMANY] Freelance Market Research & BD Consultant",       WEBID_BULLETS);
-const WORLDQUANT_SL  = mkRole("[WORLDQUANT BRAIN] Research Consultant — Apr–Jul 2023",             WORLDQUANT_BULLETS);
-const ANTHILL_SL     = mkRole("[ANTHILL VENTURES] Investment Analyst Intern — Jun–Aug 2022",       ANTHILL_BULLETS);
-
-const PROJ_SUMMARY: SL[] = [
-  { t: "[PROJECTS] ────────────────────────────────────────────", c: AMB },
-  { t: "AI & AUTOMATION   Mental Health Practitioners  Jan–Mar 2026",   c: TXT },
-  { t: "TRUNAGRIK         Consent-Based Digital ID     Jul–Dec 2025",   c: TXT },
-  { t: "ALLCARGO          Stock Price Movement          Jan–May 2023",  c: TXT },
-  { t: "V-GUARD           MD&A Business Analysis        Aug–Dec 2022", c: TXT },
-  { t: "────────────────────────────────────────────────────────", c: DIM },
-  { t: "type 'open [project]' for full detail", c: MUT },
-];
-
-const AI_SL        = mkRole("[AI & AUTOMATION] Mental Health Practitioners — Jan–Mar 2026",        AI_BULLETS);
-const TRUNAGRIK_SL = mkRole("[TRUNAGRIK] Consent-Based Digital Identity System — Jul–Dec 2025",    TRUNAGRIK_BULLETS);
-const ALLCARGO_SL  = mkRole("[ALLCARGO LOGISTICS] Financial Analysis — Jan–May 2023",              ALLCARGO_BULLETS);
-const VGUARD_SL    = mkRole("[V-GUARD INDUSTRIES] Business Analysis — Aug–Dec 2022",               VGUARD_BULLETS);
-
 
 const SKILLS_DATA = [
-  { name: "Python",        pct: 75 },
-  { name: "SQL",           pct: 82 },
-  { name: "C++",           pct: 70 },
-  { name: "Claude Code",   pct: 85 },
-  { name: "MS Excel",      pct: 85 },
-  { name: "Figma",         pct: 72 },
-  { name: "MATLAB",        pct: 65 },
+  { name: "MS Excel",    pct: 85 },
+  { name: "SQL",         pct: 82 },
+  { name: "Claude Code", pct: 85 },
+  { name: "Python",      pct: 75 },
+  { name: "Figma",       pct: 72 },
+  { name: "C++",         pct: 70 },
+  { name: "MATLAB",      pct: 65 },
 ];
 
-const SKILLS_SL: SL[] = [
-  { t: "SKILL MATRIX ──────────────────────────────────────",  c: AMB },
-  ...SKILLS_DATA.map(s => {
-    const f = Math.round(s.pct / 6.25); const e = 16 - f;
-    return { t: `${s.name.padEnd(18)} ${"█".repeat(f)}${"░".repeat(e)}  ${s.pct}%`, c: TXT };
-  }),
-  { t: "──────────────────────────────────────────────────", c: DIM },
+const TOOLKIT_ROWS: [string, string][] = [
+  ["Python",         "language"       ],
+  ["C++",            "language"       ],
+  ["SQL",            "language"       ],
+  ["Pandas / Numpy", "data analysis"  ],
+  ["Git",            "version control"],
+  ["Postman",        "api testing"    ],
+  ["MS Excel",       "modelling"      ],
+  ["MS PowerPoint",  "productivity"   ],
+  ["Figma",          "design"         ],
+  ["MATLAB",         "technical"      ],
+  ["Claude Code",    "tools"          ],
+  ["LSTA / Markit",  "data"           ],
 ];
 
-const TOOLKIT_ROWS = [
-  ["Python",            "language"  ],
-  ["C++",               "language"  ],
-  ["SQL",               "language"  ],
-  ["Pandas / Numpy",    "data analysis"],
-  ["Git",               "version control"],
-  ["Postman",           "api testing"],
-  ["MS Excel",          "modelling" ],
-  ["MS PowerPoint",     "productivity"],
-  ["Figma",             "design"    ],
-  ["MATLAB",            "technical" ],
-  ["Claude Code",       "tools"     ],
-  ["LSTA / Markit",     "data"      ],
+const CV_PATH = "/CV/Resume_Shreya_Khubber__Website.pdf";
+
+// ─── Section / card structure ─────────────────────────────────────────────────
+interface CardData {
+  id: string;
+  filename: string;
+  company: string;
+  title: string;
+  dates: string;
+  badge?: string;
+  bullets: string[];
+  special?: "skills" | "toolkit";
+}
+interface SectionData {
+  id: string;
+  label: string;
+  path: string;
+  cards: CardData[];
+}
+
+const SECTIONS: SectionData[] = [
+  {
+    id: "experience", label: "Experience", path: "~/career/experience/",
+    cards: [
+      { id: "mstar",      filename: "morningstar-quant.log",  company: "Morningstar",       title: "Quantitative Analyst",                      dates: "Jul 2024 – Present", badge: "ACTIVE", bullets: MSTAR_B },
+      { id: "mstar-int",  filename: "morningstar-intern.log", company: "Morningstar",       title: "Fixed Income Indexes Intern",                dates: "Jul – Dec 2023",                       bullets: MSTAR_INT_B },
+      { id: "webid",      filename: "webid.log",              company: "WebID, Germany",    title: "Freelance Market Research & BD Consultant", dates: "Freelance",                            bullets: WEBID_B },
+      { id: "worldquant", filename: "worldquant.log",         company: "WorldQuant Brain",  title: "Research Consultant",                       dates: "Apr – Jul 2023",                       bullets: WQ_B },
+      { id: "anthill",    filename: "anthill.log",            company: "Anthill Ventures",  title: "Investment Analyst Intern",                 dates: "Jun – Aug 2022",                       bullets: ANTHILL_B },
+    ],
+  },
+  {
+    id: "skills", label: "Skills", path: "~/career/skills/",
+    cards: [
+      { id: "skills-csv", filename: "skills.csv",    company: "Skill Matrix", title: "Technical Proficiencies",          dates: "Current", bullets: [], special: "skills" },
+      { id: "toolkit-sql",filename: "toolkit.sql",   company: "Toolkit",      title: "SELECT tool, category FROM toolkit", dates: "Current", bullets: [], special: "toolkit" },
+    ],
+  },
+  {
+    id: "education", label: "Education", path: "~/career/education/",
+    cards: [
+      {
+        id: "cfa", filename: "cfa-level2.log", company: "CFA Institute", title: "CFA Level 2 Candidate",
+        dates: "In Progress", badge: "ACTIVE",
+        bullets: [
+          "Candidate for CFA Level 2 examination",
+          "Curriculum covers equity valuation, fixed income, derivatives, portfolio management",
+          "Ongoing alongside full-time role at Morningstar",
+        ],
+      },
+      {
+        id: "bits", filename: "bits-pilani.log", company: "BITS Pilani", title: "B.E. Electronics & Instrumentation + Finance Minor",
+        dates: "2019 – 2024",
+        bullets: [
+          "Birla Institute of Technology and Science, Pilani",
+          "B.E. Electronics & Instrumentation Engineering + Finance Minor",
+          "Core coursework: Financial Markets, Signal Processing, Control Systems",
+        ],
+      },
+    ],
+  },
+  {
+    id: "achievements", label: "Projects", path: "~/career/projects/",
+    cards: [
+      { id: "trunagrik",  filename: "trunagrik.md",  company: "Trunagrik",          title: "Consent-Based Digital Identity System",               dates: "Jul – Dec 2025",  bullets: TRUN_B },
+      { id: "ai-research",filename: "ai-research.md",company: "AI & Automation",    title: "Mental Health Practitioners, AI Research",             dates: "Jan – Mar 2026",  bullets: AI_B },
+      { id: "allcargo",   filename: "allcargo.pdf",   company: "Allcargo Logistics", title: "Financial Analysis, Prof. Rajan Pandey, BITS Pilani",  dates: "Jan – May 2023",  bullets: ALLCARGO_B },
+      { id: "vguard",     filename: "v-guard.pdf",    company: "V-Guard Industries", title: "Business Analysis, Prof. Rajan Pandey, BITS Pilani",   dates: "Aug – Dec 2022",  bullets: VGUARD_B },
+      { id: "tmd",        filename: "tuned-mass-damper.md", company: "Tuned Mass Damper", title: "Engineering Project, Prof. Puneet Mishra, BITS Pilani", dates: "Jan – May 2023",  bullets: TMD_B },
+      { id: "ev-charging",filename: "ev-charging.md", company: "EV Charging in India", title: "Research Project, Prof. Tanu Shukla, BITS Pilani",   dates: "Sep – Dec 2021",  bullets: EV_B },
+    ],
+  },
 ];
 
-const TOOLKIT_SL: SL[] = [
-  { t: "SELECT tool, category FROM toolkit;",              c: MUT },
-  { t: "┌──────────────────────┬──────────────────┐",      c: DIM },
-  { t: "│ tool                 │ category         │",      c: AMB },
-  { t: "├──────────────────────┼──────────────────┤",      c: DIM },
-  ...TOOLKIT_ROWS.map(([t, c]) => ({ t: `│ ${t.padEnd(20)} │ ${c.padEnd(16)} │`, c: TXT })),
-  { t: "└──────────────────────┴──────────────────┘",      c: DIM },
-  { t: `${TOOLKIT_ROWS.length} rows returned.`,            c: OK  },
-];
-
-const CONTACT_SL: SL[] = [
-  { t: "contact.md ──────────────────────────────────────",    c: AMB },
-  { t: "Email:     shreya.khubber@gmail.com",      c: AMB, href: "mailto:shreya.khubber@gmail.com" },
-  { t: "LinkedIn:  linkedin.com/in/shreya-khubber", c: AMB, href: "https://linkedin.com/in/shreya-khubber" },
-  { t: "GitHub:    github.com/shreya-khubber",     c: AMB, href: "https://github.com/shreya-khubber" },
-  { t: "Instagram: @migratinglife",                c: AMB, href: "https://www.instagram.com/migratinglife/" },
-  { t: "Location:  Mumbai, India",                 c: TXT },
-];
-
-const CV_PATH = "/CV/Shreya%20khubber%20Resume%20_%2019.04.2026.pdf";
-
-// ── Chips & known commands ────────────────────────────────────────────────────
-const CHIPS_MAP: Record<string, string[]> = {
-  default:               ["ls", "whoami", "help"],
-  help:                  ["ls", "cat experience", "cat projects"],
-  whoami:                ["ls", "cat experience", "cat skills"],
-  ls:                    ["cat experience", "cat projects", "cat skills"],
-  "cat experience":      ["open morningstar", "open morningstar-intern", "cat projects"],
-  "open morningstar":    ["open morningstar-intern", "open webid", "cat projects"],
-  "open morningstar-intern": ["open morningstar", "open worldquant", "cat projects"],
-  "open webid":          ["open morningstar", "open worldquant", "cat projects"],
-  "open worldquant":     ["open anthill", "cat projects", "cat skills"],
-  "open anthill":        ["cat projects", "cat skills", "cd contact"],
-  "cat projects":        ["open trunagrik", "open ai-research", "cat skills"],
-  "open trunagrik":      ["open ai-research", "open allcargo", "cat skills"],
-  "open ai-research":    ["open trunagrik", "open v-guard", "cat skills"],
-  "open allcargo":       ["open v-guard", "cat experience", "cat skills"],
-  "open v-guard":        ["open allcargo", "cat experience", "cd contact"],
-  "cat skills":          ["cat toolkit.sql", "cd contact", "cat experience"],
-  "cat toolkit.sql":     ["cat skills", "cat experience", "cd contact"],
-  "cd contact":          ["cat experience", "whoami", "download cv"],
-  "download cv":         ["cd contact", "cat experience", "whoami"],
-};
-
-const KNOWN = [
-  "help","whoami","ls","cat experience","cat projects",
-  "cat skills","cat toolkit.sql","cd contact","download cv",
-  "open morningstar","open morningstar-intern","open webid","open worldquant","open anthill",
-  "open trunagrik","open ai-research","open allcargo","open v-guard",
-  "query roles --filter=current","query roles --filter=all","query roles --help",
-  "history","clear",
-];
-
-const PREVIEW_MAP: Partial<Record<string, Preview>> = {
-  "whoami":                    "whoami",
-  "ls":                        "ls",
-  "cat experience":            "experience",
-  "query roles --filter=all":  "experience",
-  "open morningstar":          "morningstar",
-  "query roles --filter=current": "morningstar",
-  "open morningstar-intern":   "morningstar-intern",
-  "open webid":                "webid",
-  "open worldquant":           "worldquant",
-  "open anthill":              "anthill",
-  "cat projects":              "projects",
-  "open ai-research":          "ai-research",
-  "open trunagrik":            "trunagrik",
-  "open allcargo":             "allcargo",
-  "open v-guard":              "v-guard",
-  "cat skills":                "skills",
-  "cat toolkit.sql":           "toolkit",
-  "cd contact":                "contact",
-  "download cv":               "contact",
-  "clear":                     "none",
-};
-
-// ── Component ─────────────────────────────────────────────────────────────────
+// ─── Component ────────────────────────────────────────────────────────────────
 export default function CareerPage() {
-  const [lines,   setLines]   = useState<OL[]>([]);
-  const [partial, setPartial] = useState<{ t: string; c: string } | null>(null);
-  const [input,   setInput]   = useState("");
-  const [chips,   setChips]   = useState(CHIPS_MAP.default);
-  const [preview, setPreview] = useState<Preview>("none");
-  const [pvKey,   setPvKey]   = useState(0);
-  const [expanded, setExpanded] = useState<Set<string>>(new Set());
+  const [bootPhase, setBootPhase]       = useState<BootPhase>("playing");
+  const [bootLines, setBootLines]       = useState<BLine[]>([]);
+  const [activeSection, setActiveSection] = useState("experience");
+  const [expanded, setExpanded]         = useState<Set<string>>(new Set());
+  const [search, setSearch]             = useState("");
+  const [searchFocused, setSearchFocused] = useState(false);
 
-  const outRef   = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
-  const booted   = useRef(false);
+  const skipRef     = useRef(false);
+  const searchRef   = useRef<HTMLInputElement>(null);
+  const mainRef     = useRef<HTMLDivElement>(null);
+  const secRefs     = useRef<Record<string, HTMLElement | null>>({});
 
-  const Q         = useRef<{ lines: SL[]; done?: () => void }[]>([]);
-  const running   = useRef(false);
-  const tmr       = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const cancelled = useRef(false);
-  const hist      = useRef<string[]>([]);
-  const histIdx   = useRef(-1);
-  const saved     = useRef("");
-  const session   = useRef<string[]>([]);
+  // ── Skip boot ──────────────────────────────────────────────────────────────
+  const skipBoot = useCallback(() => {
+    if (skipRef.current) return;
+    skipRef.current = true;
+    setBootLines(BOOT_DEF.map(l => ({ ...l, dots: l.special === "think" ? "..........." : undefined })));
+    setBootPhase("collapsing");
+  }, []);
 
-  const procQ    = useRef<() => void>(() => {});
-  const procLine = useRef<(ls: SL[], i: number, done?: () => void) => void>(() => {});
-  const typeC    = useRef<(text: string, c: string, href: string | undefined, i: number, cb: () => void) => void>(() => {});
-
-  const scroll = () => requestAnimationFrame(() => {
-    if (outRef.current) outRef.current.scrollTop = outRef.current.scrollHeight;
-  });
-  const addLine = (t: string, c: string, href?: string) => {
-    setLines(p => [...p, { id: uid(), t, c, href }]); scroll();
-  };
-
-  procQ.current = () => {
-    if (Q.current.length === 0) { running.current = false; setPartial(null); return; }
-    const job = Q.current.shift()!;
-    procLine.current(job.lines, 0, job.done);
-  };
-  procLine.current = (ls, i, done) => {
-    if (cancelled.current) {
-      ls.slice(i).forEach(l => addLine(l.t, l.c ?? AMB, l.href));
-      setPartial(null); cancelled.current = false; done?.(); procQ.current(); return;
-    }
-    if (i >= ls.length) { setPartial(null); done?.(); procQ.current(); return; }
-    const l = ls[i]; const c = l.c ?? AMB;
-    const next = () => procLine.current(ls, i + 1, done);
-    if (!l.t || l.t.length > 80) { addLine(l.t, c, l.href); tmr.current = setTimeout(next, 22); }
-    else { setPartial({ t: "", c }); typeC.current(l.t, c, l.href, 0, next); }
-  };
-  typeC.current = (text, c, href, i, cb) => {
-    if (cancelled.current) { addLine(text, c, href); setPartial(null); cb(); return; }
-    const n = i + 1;
-    setPartial({ t: text.slice(0, n), c }); scroll();
-    if (n >= text.length) { addLine(text, c, href); setPartial(null); tmr.current = setTimeout(cb, 28); }
-    else tmr.current = setTimeout(() => typeC.current(text, c, href, n, cb), 18);
-  };
-
-  const enqueue = (ls: SL[], done?: () => void) => {
-    cancelled.current = false;
-    Q.current.push({ lines: ls, done });
-    if (!running.current) { running.current = true; procQ.current(); }
-  };
-  const flush = () => {
-    if (running.current) { if (tmr.current) clearTimeout(tmr.current); cancelled.current = true; }
-  };
-  const focus = () => requestAnimationFrame(() => inputRef.current?.focus());
-  const echo  = (cmd: string) => addLine(`ANALYST:~$ ${cmd}`, AMB);
-
-  const downloadCV = () => {
-    const a = document.createElement("a");
-    a.href = CV_PATH; a.download = "Shreya_Khubber_CV.pdf";
-    document.body.appendChild(a); a.click(); document.body.removeChild(a);
-  };
-
-  const exec = (raw: string) => {
-    const cmd = raw.trim().toLowerCase();
-    if (!cmd) { focus(); return; }
-    flush();
-    const go = () => {
-      hist.current = [raw, ...hist.current.slice(0, 49)];
-      histIdx.current = -1; saved.current = "";
-      session.current = [...session.current, raw];
-      echo(raw);
-      setChips(CHIPS_MAP[cmd] ?? CHIPS_MAP.default);
-      const p = PREVIEW_MAP[cmd];
-      if (p !== undefined) { setPreview(p); setPvKey(k => k + 1); if (p === "none") setExpanded(new Set()); }
-
-      if (cmd === "clear") { setLines([]); setPartial(null); Q.current = []; running.current = false; setChips(CHIPS_MAP.default); focus(); return; }
-      if (cmd === "download cv") { downloadCV(); enqueue([{ t: "downloading CV...", c: OK }], focus); return; }
-      if (cmd === "help")               { enqueue(HELP, focus); return; }
-      if (cmd === "whoami")             { enqueue(WHOAMI, focus); return; }
-      if (cmd === "ls")                 { enqueue(LS, focus); return; }
-      if (cmd === "cat experience" || cmd === "query roles --filter=all") { enqueue(EXP_SUMMARY, focus); return; }
-      if (cmd === "open morningstar" || cmd === "query roles --filter=current") { enqueue(MSTAR_SL, focus); return; }
-      if (cmd === "open morningstar-intern") { enqueue(MSTAR_INTERN_SL, focus); return; }
-      if (cmd === "open webid")         { enqueue(WEBID_SL, focus); return; }
-      if (cmd === "open worldquant")    { enqueue(WORLDQUANT_SL, focus); return; }
-      if (cmd === "open anthill")       { enqueue(ANTHILL_SL, focus); return; }
-      if (cmd === "cat projects")       { enqueue(PROJ_SUMMARY, focus); return; }
-      if (cmd === "open ai-research")   { enqueue(AI_SL, focus); return; }
-      if (cmd === "open trunagrik")     { enqueue(TRUNAGRIK_SL, focus); return; }
-      if (cmd === "open allcargo")      { enqueue(ALLCARGO_SL, focus); return; }
-      if (cmd === "open v-guard")       { enqueue(VGUARD_SL, focus); return; }
-      if (cmd === "cat skills")         { enqueue(SKILLS_SL, focus); return; }
-      if (cmd === "cat toolkit.sql")    { enqueue(TOOLKIT_SL, focus); return; }
-      if (cmd === "cd contact")         { enqueue(CONTACT_SL, focus); return; }
-      if (cmd === "query roles --help") {
-        enqueue([
-          { t: "usage: query roles --filter=[option]", c: TXT },
-          { t: "  --filter=current    active role",    c: MUT },
-          { t: "  --filter=all        all roles",      c: MUT },
-        ], focus); return;
-      }
-      if (cmd === "history") {
-        if (!session.current.length) { enqueue([{ t: "(no commands yet)", c: MUT }], focus); return; }
-        enqueue(session.current.map((c, i) => ({ t: `  ${String(i+1).padStart(3)}  ${c}`, c: MUT })), focus); return;
-      }
-      if (cmd === "vim" || cmd === "emacs") { enqueue([{ t: "editor wars are above my pay grade — try 'cat skills' instead", c: ERR }], focus); return; }
-      if (["eqs","srch","des","grab"].includes(cmd)) { enqueue([{ t: "terminal command detected — type 'cat skills' to see what's in the stack.", c: AMB }], focus); return; }
-      if (cmd.startsWith("sudo ")) { enqueue([{ t: "you don't have permission to do that. this is a quant's terminal, not a sysadmin's.", c: ERR }], focus); return; }
-      if (cmd === "hello" || cmd === "hi") { enqueue([{ t: "hey. type 'whoami' to get started, or 'ls' to browse.", c: OK }], focus); return; }
-      if (cmd === "exit" || cmd === "quit") { enqueue([{ t: "there is no exit. only alpha.", c: ERR }], focus); return; }
-      enqueue([{ t: `command not found: ${raw.trim()} — type 'help'`, c: ERR }], focus);
-    };
-    if (running.current) setTimeout(go, 60); else go();
-  };
-
+  // ── Boot sequence ──────────────────────────────────────────────────────────
   useEffect(() => {
-    if (booted.current) return;
-    booted.current = true;
-    document.title = "ANALYST.WORKSPACE — READY";
-    const mobile = typeof window !== "undefined" && window.innerWidth < 768;
-    enqueue(mobile ? BOOT_M : BOOT, () => focus());
+    // `cancelled` is local to this effect invocation — StrictMode creates two invocations,
+    // each with their own flag. Cleanup sets the first one's flag without touching the second's.
+    let cancelled = false;
+    skipRef.current = false;
+    setBootLines([]);
+    setBootPhase("playing");
+    document.title = "ANALYST.WORKSPACE: READY";
+
+    const stop = () => cancelled || skipRef.current;
+
+    const run = async () => {
+      for (let i = 0; i < BOOT_DEF.length; i++) {
+        if (stop()) return;
+        const line = BOOT_DEF[i];
+
+        if (line.special === "think") {
+          setBootLines(p => [...p, { ...line, dots: "" }]);
+          await sleep(700); if (stop()) return;
+          for (let d = 1; d <= 11; d++) {
+            await sleep(180 + Math.random() * 280); if (stop()) return;
+            setBootLines(p => { const c = [...p]; c[c.length - 1] = { ...c[c.length - 1], dots: ".".repeat(d) }; return c; });
+          }
+          await sleep(400); if (stop()) return;
+          continue;
+        }
+
+        if (line.special === "done") {
+          await sleep(400); if (stop()) return;
+          setBootLines(p => [...p, { ...line }]);
+          await sleep(2000); if (stop()) return;
+          setBootPhase("collapsing");
+          return;
+        }
+
+        const d = i < 5 ? 80 + Math.random() * 40 : 100 + Math.random() * 60;
+        await sleep(d); if (stop()) return;
+        setBootLines(p => [...p, { ...line }]);
+      }
+    };
+    run();
+    return () => { cancelled = true; };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const onKey = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") { const v = input; setInput(""); exec(v); }
-    else if (e.key === "ArrowUp") {
-      e.preventDefault();
-      const h = hist.current; if (!h.length) return;
-      if (histIdx.current === -1) saved.current = input;
-      const ni = Math.min(histIdx.current + 1, h.length - 1);
-      histIdx.current = ni; setInput(h[ni]);
-    } else if (e.key === "ArrowDown") {
-      e.preventDefault();
-      if (histIdx.current === -1) return;
-      const ni = histIdx.current - 1; histIdx.current = ni;
-      setInput(ni === -1 ? saved.current : hist.current[ni]);
-    } else if (e.key === "Tab") {
-      e.preventDefault();
-      const v = input.toLowerCase();
-      const m = KNOWN.find(c => c.startsWith(v) && c !== v);
-      if (m) setInput(m);
-    } else if (running.current) { flush(); }
+  // ── Keyboard shortcuts ────────────────────────────────────────────────────
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && bootPhase === "playing") { skipBoot(); return; }
+      if (e.key === "/" && bootPhase === "done" && document.activeElement !== searchRef.current) {
+        e.preventDefault(); searchRef.current?.focus();
+      }
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [bootPhase, skipBoot]);
+
+  // ── IntersectionObserver for active section ───────────────────────────────
+  useEffect(() => {
+    if (bootPhase !== "done") return;
+    const obs = new IntersectionObserver(
+      entries => {
+        const visible = entries.filter(e => e.isIntersecting);
+        if (visible.length > 0) setActiveSection(visible[0].target.getAttribute("data-sid") ?? "experience");
+      },
+      { threshold: 0.15, rootMargin: "-15% 0px -65% 0px" }
+    );
+    Object.values(secRefs.current).forEach(el => { if (el) obs.observe(el); });
+    return () => obs.disconnect();
+  }, [bootPhase]);
+
+  const scrollTo = (id: string) => {
+    secRefs.current[id]?.scrollIntoView({ behavior: "smooth", block: "start" });
+    setActiveSection(id);
   };
 
-  // ── Right panel ───────────────────────────────────────────────────────────
-  const toggleNode = (id: string) => setExpanded(s => {
-    const n = new Set(s); n.has(id) ? n.delete(id) : n.add(id); return n;
-  });
+  const toggleCard = (id: string) => setExpanded(p => { const n = new Set(p); n.has(id) ? n.delete(id) : n.add(id); return n; });
 
-  const previewLabel: Record<Preview, string> = {
-    none: "none", whoami: "index.json", ls: "workspace/",
-    experience: "experience/", projects: "projects/",
-    morningstar: "morningstar-quant.log", "morningstar-intern": "morningstar-intern.log",
-    webid: "webid.log", worldquant: "worldquant.log", anthill: "anthill.log",
-    "ai-research": "ai-mental-health.md", trunagrik: "trunagrik.md",
-    allcargo: "allcargo.pdf", "v-guard": "v-guard.pdf",
-    skills: "skills.csv", toolkit: "toolkit.sql", contact: "contact.md",
+  const matchSearch = (c: CardData) => {
+    if (!search) return true;
+    const q = search.toLowerCase();
+    return [c.company, c.title, c.dates, ...c.bullets].some(s => s.toLowerCase().includes(q));
   };
 
-  const RoleDetail = ({ title, sub, bullets, color = TXT }: { title: string; sub: string; bullets: string[]; color?: string }) => (
-    <div style={{ padding:"24px 28px" }}>
-      <div style={{ color:AMB, fontFamily:F, fontSize:14, fontWeight:600, letterSpacing:"0.06em", marginBottom:3 }}>{title}</div>
-      <div style={{ color:MUT, fontFamily:F, fontSize:10, marginBottom:4 }}>{sub}</div>
-      <div style={{ height:1, background:"rgba(255,179,0,0.18)", margin:"14px 0" }}/>
-      <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
-        {bullets.map((b,i) => (
-          <div key={i} style={{ color, fontFamily:F, fontSize:11, lineHeight:1.65, display:"flex", gap:10 }}>
-            <span style={{ color:AMB, flexShrink:0 }}>›</span><span>{b}</span>
+  const filtered = SECTIONS.map(s => ({ ...s, cards: s.cards.filter(matchSearch) })).filter(s => s.cards.length > 0);
+  const totalCards = SECTIONS.reduce((a, s) => a + s.cards.length, 0);
+
+  // ─── CSS ──────────────────────────────────────────────────────────────────
+  const css = `
+    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap');
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{background:${BG};height:100%;overflow:hidden}
+    @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes fillBar{from{width:0}to{width:var(--w)}}
+    @keyframes bootCollapse{from{transform:scaleY(1)}to{transform:scaleY(0)}}
+    .blk-cur{display:inline-block;width:0.58em;height:1.05em;background:${ACC};vertical-align:text-bottom;animation:blink 1.1s step-end infinite;flex-shrink:0}
+    ::-webkit-scrollbar{width:3px;height:3px}
+    ::-webkit-scrollbar-track{background:transparent}
+    ::-webkit-scrollbar-thumb{background:rgba(255,179,0,0.2);border-radius:2px}
+    ::-webkit-scrollbar-thumb:hover{background:rgba(255,179,0,0.4)}
+    .card{border:1px solid ${BORD};background:${BG2};border-radius:2px;margin-bottom:10px;transition:border-color .2s;animation:fadeIn .25s ease}
+    .card:hover{border-color:rgba(160,110,40,0.45)}
+    .card-hdr{padding:14px 18px;cursor:pointer;display:flex;align-items:flex-start;justify-content:space-between;gap:12px;user-select:none}
+    .card-body{overflow:hidden;max-height:0;opacity:0;transition:max-height .38s cubic-bezier(.4,0,.2,1),opacity .25s ease}
+    .card-body.open{max-height:900px;opacity:1}
+    .card-body-inner{padding:0 18px 18px;border-top:1px solid ${BORD}}
+    .nav-folder{padding:7px 12px;cursor:pointer;display:flex;align-items:center;gap:8px;font-family:${F};font-size:12px;color:${MUT};border-radius:2px;transition:all .15s;user-select:none;letter-spacing:.04em}
+    .nav-folder:hover{color:${TXT};background:rgba(160,110,40,0.1)}
+    .nav-folder.act{color:${ACC};background:rgba(255,179,0,0.07)}
+    .tab-strip{display:flex;overflow-x:auto;border-bottom:1px solid ${BORD};background:${BG};scrollbar-width:none;flex-shrink:0}
+    .tab-strip::-webkit-scrollbar{display:none}
+    .tab-item{padding:11px 20px;font-family:${F};font-size:11px;white-space:nowrap;cursor:pointer;color:${MUT};border-bottom:2px solid transparent;transition:all .15s;user-select:none;letter-spacing:.06em;flex-shrink:0;min-height:44px;display:flex;align-items:center}
+    .tab-item:hover{color:${TXT}}
+    .tab-item.act{color:${ACC};border-bottom-color:${ACC}}
+    .bar-fill{height:100%;background:${ACC};border-radius:2px;opacity:.65;animation:fillBar .6s ease forwards}
+    .main-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;align-items:start}
+    @media(max-width:767px){
+      .sidebar{display:none!important}
+      .tab-row{display:block!important}
+      .main-grid{grid-template-columns:1fr!important}
+      .span2{grid-column:span 1!important}
+    }
+    @media(min-width:768px){.tab-row{display:none!important}}
+  `;
+
+  // ─── Boot overlay ─────────────────────────────────────────────────────────
+  const bootOverlay = bootPhase !== "done" && (
+    <div
+      onTransitionEnd={(e) => { if (e.propertyName === "transform") setBootPhase("done"); }}
+      style={{
+        position: "fixed", inset: 0, background: BG, zIndex: 100,
+        display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+        transformOrigin: "top",
+        transition: "transform 0.65s cubic-bezier(0.4, 0, 0.2, 1)",
+        transform: bootPhase === "collapsing" ? "scaleY(0)" : "scaleY(1)",
+      }}
+    >
+      <div style={{ width: "min(700px, 92vw)", padding: "20px 0" }}>
+        {bootLines.map((line, i) => (
+          <div key={i} style={{
+            fontFamily: F, fontSize: "clamp(11px, 1.3vw, 13px)", lineHeight: 1.85,
+            display: "flex", gap: "1em", marginBottom: 1,
+          }}>
+            <span style={{
+              display: "inline-block", width: 62, flexShrink: 0, fontSize: "clamp(10px,1.1vw,11px)",
+              color: line.tag === "[WARN]" ? YELL : line.tag === "[DONE]" ? ACC : line.tag === "[THINK]" ? MUT : line.tag === "[OK]" ? "rgba(94,116,88,0.65)" : MUT,
+            }}>{line.tag}</span>
+            <span style={{ color: line.special === "done" ? ACC : line.color }}>
+              {line.msg}{line.dots !== undefined ? line.dots : ""}
+            </span>
           </div>
         ))}
-      </div>
-    </div>
-  );
-
-  const TimelineNode = ({ id, title, badge, sub, bullets, active }: {
-    id: string; title: string; badge?: string; sub: string; bullets: string[]; active?: boolean;
-  }) => (
-    <div style={{ display:"flex", gap:16, marginBottom:24 }}>
-      <div onClick={() => toggleNode(id)}
-        style={{ width:22, height:22, borderRadius:"50%", flexShrink:0, marginTop:3, cursor:"pointer",
-          border:`2px solid ${active ? AMB : MUT}`, background: active ? AMB : "transparent",
-          boxShadow: active ? "0 0 12px rgba(255,179,0,0.35)" : "none" }}/>
-      <div style={{ flex:1 }}>
-        <div onClick={() => toggleNode(id)} style={{ display:"flex", alignItems:"center", gap:8, cursor:"pointer" }}>
-          <span style={{ color: active ? AMB : TXT, fontFamily:F, fontSize:12, fontWeight:600 }}>{title}</span>
-          {badge && <span style={{ background:"rgba(74,255,145,.1)", border:`1px solid ${OK}`, color:OK, fontFamily:F, fontSize:8, padding:"2px 6px", letterSpacing:"0.12em" }}>{badge}</span>}
-        </div>
-        <div style={{ color:MUT, fontFamily:F, fontSize:10, marginTop:2 }}>{sub}</div>
-        {expanded.has(id) && (
-          <div style={{ marginTop:8, display:"flex", flexDirection:"column", gap:5 }}>
-            {bullets.map((b,i) => (
-              <div key={i} style={{ color:TXT, fontFamily:F, fontSize:10, lineHeight:1.6, display:"flex", gap:8 }}>
-                <span style={{ color:active?AMB:MUT, flexShrink:0 }}>›</span><span>{b}</span>
-              </div>
-            ))}
+        {bootPhase === "playing" && bootLines.length > 0 && !bootLines[bootLines.length - 1].special && (
+          <div style={{ display: "flex", paddingLeft: "calc(62px + 1em)" }}>
+            <span className="blk-cur" />
           </div>
         )}
       </div>
+      <button
+        onClick={skipBoot}
+        style={{
+          position: "fixed", bottom: 24, right: 28,
+          fontFamily: F, fontSize: 11, color: DIM, cursor: "pointer",
+          letterSpacing: "0.14em", padding: "6px 12px",
+          border: `1px solid ${DIM}`, background: "transparent",
+          transition: "all .15s",
+        }}
+        onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.color = MUT; (e.currentTarget as HTMLButtonElement).style.borderColor = MUT; }}
+        onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.color = DIM; (e.currentTarget as HTMLButtonElement).style.borderColor = DIM; }}
+      >
+        skip →
+      </button>
     </div>
   );
 
-  const renderPreview = () => {
-    if (preview === "none") return (
-      <div style={{ display:"flex", alignItems:"center", justifyContent:"center", height:"100%", opacity:.25 }}>
-        <span style={{ color:MUT, fontFamily:F, fontSize:11, letterSpacing:"0.2em" }}>NO FILE OPEN</span>
-      </div>
-    );
+  // ─── File explorer ────────────────────────────────────────────────────────
+  const explorer = (
+    <div style={{ position: "fixed", inset: 0, background: BG, display: "flex", flexDirection: "column", overflow: "hidden", fontFamily: F }}>
+      {/* Topbar */}
+      <div style={{ height: 46, flexShrink: 0, borderBottom: `1px solid ${BORD}`, background: BG, display: "flex", alignItems: "center", padding: "0 16px", gap: 14, zIndex: 20 }}>
+        <div style={{ display: "flex", gap: 6, flexShrink: 0 }}>
+          {["#FF5F57","#FFBD2E","#28C840"].map(c => <div key={c} style={{ width: 11, height: 11, borderRadius: "50%", background: c, opacity: 0.75 }}/>)}
+        </div>
+        <a href="/" style={{ color: MUT, fontSize: 11, fontFamily: F, letterSpacing: "0.12em", textDecoration: "none", flexShrink: 0 }}>← icicle</a>
+        <span style={{ color: TXT, fontFamily: F, fontSize: 12, letterSpacing: "0.08em", opacity: 0.8, flexShrink: 0 }}>analyst:~/career$</span>
 
-    if (preview === "whoami") return (
-      <div style={{ padding:"24px 28px", display:"flex", flexDirection:"column", gap:14 }}>
-        {[["NAME","Shreya Khubber"],["ROLE","Quantitative Analyst"],["NODE","MORNINGSTAR.QUANT"],["LOCATION","Mumbai, India"]].map(([k,v]) => (
-          <div key={k} style={{ display:"flex", gap:16, alignItems:"baseline" }}>
-            <span style={{ color:MUT, fontFamily:F, fontSize:10, letterSpacing:"0.2em", width:80, flexShrink:0 }}>{k}</span>
-            <span style={{ color:AMB, fontFamily:F, fontSize:13 }}>{v}</span>
+        {/* Search */}
+        <div
+          style={{ flex: 1, maxWidth: 260, marginLeft: "auto", display: "flex", alignItems: "center", border: `1px solid ${BORD}`, background: "rgba(10,20,10,0.5)", padding: "4px 10px", borderRadius: 2, cursor: "text", minHeight: 28 }}
+          onClick={() => searchRef.current?.focus()}
+        >
+          <span style={{ color: MUT, fontFamily: F, fontSize: 11, marginRight: 6, flexShrink: 0, opacity: 0.7 }}>$</span>
+          <div style={{ flex: 1, display: "flex", alignItems: "center", minWidth: 0, overflow: "hidden", position: "relative" }}>
+            {!search && !searchFocused && (
+              <span style={{ color: DIM, fontFamily: F, fontSize: 11, pointerEvents: "none", letterSpacing: "0.06em", opacity: 0.7 }}>search...</span>
+            )}
+            <input
+              ref={searchRef}
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              onFocus={() => setSearchFocused(true)}
+              onBlur={() => setSearchFocused(false)}
+              onKeyDown={e => { if (e.key === "Escape") { setSearch(""); searchRef.current?.blur(); } }}
+              spellCheck={false} autoComplete="off"
+              style={{
+                width: `${search.length}ch`,
+                background: "transparent", border: "none", outline: "none",
+                color: TXT, fontFamily: F, fontSize: 11,
+                caretColor: "transparent", padding: 0, minWidth: 0, flexShrink: 0,
+                position: search || searchFocused ? "relative" : "absolute", opacity: search || searchFocused ? 1 : 0,
+              }}
+            />
+            {searchFocused && <span className="blk-cur" style={{ marginLeft: 1 }}/>}
           </div>
-        ))}
-        <div style={{ display:"flex", gap:16, alignItems:"baseline" }}>
-          <span style={{ color:MUT, fontFamily:F, fontSize:10, letterSpacing:"0.2em", width:80, flexShrink:0 }}>STATUS</span>
-          <span style={{ color:OK, fontFamily:F, fontSize:13 }}>Active {"■".repeat(8)}{"░".repeat(2)}</span>
         </div>
       </div>
-    );
 
-    if (preview === "ls") {
-      type Item = { label: string; cmd?: string; indent: number; isDir?: boolean };
-      const items: Item[] = [
-        { label:"analyst.workspace/",            indent:0, isDir:true },
-        { label:"experience/",                   indent:1, isDir:true },
-        { label:"morningstar-quant.log",          indent:2, cmd:"open morningstar" },
-        { label:"morningstar-intern.log",         indent:2, cmd:"open morningstar-intern" },
-        { label:"webid.log",                      indent:2, cmd:"open webid" },
-        { label:"worldquant.log",                 indent:2, cmd:"open worldquant" },
-        { label:"anthill.log",                    indent:2, cmd:"open anthill" },
-        { label:"projects/",                      indent:1, isDir:true },
-        { label:"trunagrik.md",                   indent:2, cmd:"open trunagrik" },
-        { label:"ai-mental-health.md",            indent:2, cmd:"open ai-research" },
-        { label:"allcargo.pdf",                   indent:2, cmd:"open allcargo" },
-        { label:"v-guard.pdf",                    indent:2, cmd:"open v-guard" },
-        { label:"skills.csv",                     indent:1, cmd:"cat skills" },
-        { label:"toolkit.sql",                    indent:1, cmd:"cat toolkit.sql" },
-        { label:"contact.md",                     indent:1, cmd:"cd contact" },
-      ];
-      return (
-        <div style={{ padding:"16px 16px" }}>
-          {items.map((item, i) => (
-            <div key={i} onClick={() => { if(item.cmd){ setInput(""); exec(item.cmd); } }}
-              style={{ padding:"4px 10px", paddingLeft:10+item.indent*16, fontFamily:F, fontSize:11,
-                color:item.isDir?AMB:item.cmd?TXT:MUT, cursor:item.cmd?"pointer":"default",
-                display:"flex", alignItems:"center", gap:7, borderRadius:2, transition:"background .1s" }}
-              onMouseEnter={e => { if(item.cmd)(e.currentTarget as HTMLElement).style.background="rgba(255,179,0,0.07)"; }}
-              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background="transparent"; }}>
-              <span style={{ fontSize:10, opacity:.65 }}>{item.isDir?"📁":"📄"}</span>
-              <span>{item.label}</span>
-              {item.cmd && <span style={{ marginLeft:"auto", fontSize:8, color:MUT }}>OPEN →</span>}
-            </div>
+      {/* Mobile tab strip */}
+      <div className="tab-row" style={{ display: "none" }}>
+        <div className="tab-strip">
+          {SECTIONS.map(s => (
+            <div key={s.id} className={`tab-item ${activeSection === s.id ? "act" : ""}`} onClick={() => scrollTo(s.id)}>{s.label}</div>
           ))}
         </div>
-      );
-    }
-
-    if (preview === "experience") return (
-      <div style={{ padding:"20px 24px", position:"relative" }}>
-        <div style={{ position:"absolute", left:35, top:48, bottom:120, borderLeft:"1px dashed rgba(255,179,0,0.25)" }}/>
-        <TimelineNode id="mstar" title="MORNINGSTAR — QUANT ANALYST" badge="ACTIVE" sub="Jul 2024–Present · Full-time" bullets={MSTAR_BULLETS} active />
-        <TimelineNode id="webid" title="WEBID — GERMANY" sub="Freelance Market Research & BD Consultant" bullets={WEBID_BULLETS} />
-        <TimelineNode id="intern" title="MORNINGSTAR — FIXED INCOME INTERN" sub="Jul–Dec 2023 · Mumbai" bullets={MSTAR_INTERN_BULLETS} />
-        <TimelineNode id="wq" title="WORLDQUANT BRAIN" sub="Research Consultant · Apr–Jul 2023" bullets={WORLDQUANT_BULLETS} />
-        <TimelineNode id="anthill" title="ANTHILL VENTURES" sub="Investment Analyst Intern · Jun–Aug 2022" bullets={ANTHILL_BULLETS} />
-        <p style={{ color:MUT, fontFamily:F, fontSize:8, marginTop:4, letterSpacing:"0.15em" }}>CLICK NODE TO EXPAND</p>
       </div>
-    );
 
-    if (preview === "morningstar")        return <RoleDetail title="MORNINGSTAR" sub="Quantitative Analyst · Jul 2024–Present" bullets={MSTAR_BULLETS} />;
-    if (preview === "morningstar-intern") return <RoleDetail title="MORNINGSTAR" sub="Fixed Income Indexes Intern · Jul–Dec 2023" bullets={MSTAR_INTERN_BULLETS} />;
-    if (preview === "webid")              return <RoleDetail title="WEBID — GERMANY" sub="Freelance Market Research & BD Consultant" bullets={WEBID_BULLETS} color={TXT} />;
-    if (preview === "worldquant")         return <RoleDetail title="WORLDQUANT BRAIN" sub="Research Consultant · Apr–Jul 2023" bullets={WORLDQUANT_BULLETS} />;
-    if (preview === "anthill")            return <RoleDetail title="ANTHILL VENTURES" sub="Investment Analyst Intern · Jun–Aug 2022" bullets={ANTHILL_BULLETS} />;
-
-    if (preview === "projects") return (
-      <div style={{ padding:"20px 24px", position:"relative" }}>
-        <div style={{ position:"absolute", left:35, top:48, bottom:100, borderLeft:"1px dashed rgba(255,179,0,0.25)" }}/>
-        <TimelineNode id="ai" title="AI & AUTOMATION" sub="Mental Health Practitioners · Jan–Mar 2026" bullets={AI_BULLETS} />
-        <TimelineNode id="trunagrik" title="TRUNAGRIK" sub="Consent-Based Digital Identity · Jul–Dec 2025" bullets={TRUNAGRIK_BULLETS} />
-        <TimelineNode id="allcargo" title="ALLCARGO LOGISTICS" sub="Financial Analysis · Jan–May 2023" bullets={ALLCARGO_BULLETS} />
-        <TimelineNode id="vguard" title="V-GUARD INDUSTRIES" sub="Business Analysis · Aug–Dec 2022" bullets={VGUARD_BULLETS} />
-        <p style={{ color:MUT, fontFamily:F, fontSize:8, marginTop:4, letterSpacing:"0.15em" }}>CLICK NODE TO EXPAND</p>
-      </div>
-    );
-
-    if (preview === "ai-research") return <RoleDetail title="AI & AUTOMATION" sub="Mental Health Practitioners · Jan–Mar 2026" bullets={AI_BULLETS} />;
-    if (preview === "trunagrik")   return <RoleDetail title="TRUNAGRIK" sub="Consent-Based Digital Identity System · Jul–Dec 2025" bullets={TRUNAGRIK_BULLETS} />;
-    if (preview === "allcargo")    return <RoleDetail title="ALLCARGO LOGISTICS" sub="Financial Analysis · Prof. Rajan Pandey, BITS Pilani · Jan–May 2023" bullets={ALLCARGO_BULLETS} />;
-    if (preview === "v-guard")     return <RoleDetail title="V-GUARD INDUSTRIES" sub="Business Analysis · Prof. Rajan Pandey, BITS Pilani · Aug–Dec 2022" bullets={VGUARD_BULLETS} />;
-
-    if (preview === "skills") return (
-      <div style={{ padding:"24px 28px", display:"flex", flexDirection:"column", gap:14 }}>
-        {SKILLS_DATA.map(s => (
-          <div key={s.name}>
-            <div style={{ display:"flex", justifyContent:"space-between", marginBottom:5 }}>
-              <span style={{ color:TXT, fontFamily:F, fontSize:11 }}>{s.name}</span>
-              <span style={{ color:AMB, fontFamily:F, fontSize:11 }}>{s.pct}%</span>
+      {/* Body */}
+      <div style={{ flex: 1, display: "flex", overflow: "hidden", minHeight: 0 }}>
+        {/* Sidebar */}
+        <div className="sidebar" style={{ width: 196, flexShrink: 0, borderRight: `1px solid ${BORD}`, padding: "16px 8px", overflowY: "auto", display: "flex", flexDirection: "column", gap: 2 }}>
+          <div style={{ color: DIM, fontFamily: F, fontSize: 9, letterSpacing: "0.28em", padding: "0 12px 10px", textTransform: "uppercase" }}>WORKSPACE</div>
+          {SECTIONS.map(s => (
+            <div key={s.id} className={`nav-folder ${activeSection === s.id ? "act" : ""}`} onClick={() => scrollTo(s.id)}>
+              <span style={{ fontSize: 12 }}>📁</span>
+              <span>{s.label}/</span>
             </div>
-            <div style={{ height:3, background:"rgba(255,179,0,0.1)", borderRadius:2, overflow:"hidden" }}>
-              <div className="skill-bar" style={{ "--pct":`${s.pct}%` } as React.CSSProperties}/>
-            </div>
-          </div>
-        ))}
-      </div>
-    );
-
-    if (preview === "toolkit") return (
-      <div style={{ padding:"20px 24px" }}>
-        <div style={{ color:MUT, fontFamily:F, fontSize:11, marginBottom:12 }}>SELECT tool, category FROM toolkit;</div>
-        <table style={{ borderCollapse:"collapse", fontFamily:F, fontSize:11, width:"100%" }}>
-          <thead>
-            <tr>{["tool","category"].map(h=>(
-              <th key={h} style={{ padding:"6px 14px", textAlign:"left", border:"1px solid rgba(255,179,0,0.22)",
-                background:"rgba(255,179,0,0.06)", color:AMB, letterSpacing:"0.08em", fontWeight:400 }}>{h}</th>
-            ))}</tr>
-          </thead>
-          <tbody>
-            {TOOLKIT_ROWS.map(([tool, cat], i) => (
-              <tr key={i}>
-                <td style={{ padding:"6px 14px", border:"1px solid rgba(255,179,0,0.1)", color:TXT }}>{tool}</td>
-                <td style={{ padding:"6px 14px", border:"1px solid rgba(255,179,0,0.1)", color:MUT }}>{cat}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        <div style={{ color:OK, fontFamily:F, fontSize:11, marginTop:10 }}>{TOOLKIT_ROWS.length} rows returned.</div>
-      </div>
-    );
-
-    if (preview === "contact") return (
-      <div style={{ padding:"24px 28px", display:"flex", flexDirection:"column", gap:20 }}>
-        {[
-          { label:"EMAIL",     val:"shreya.khubber@gmail.com",       href:"mailto:shreya.khubber@gmail.com" },
-          { label:"LINKEDIN",  val:"linkedin.com/in/shreya-khubber",  href:"https://linkedin.com/in/shreya-khubber" },
-          { label:"GITHUB",    val:"github.com/shreya-khubber",       href:"https://github.com/shreya-khubber" },
-          { label:"INSTAGRAM", val:"@migratinglife",                  href:"https://www.instagram.com/migratinglife/" },
-        ].map(({ label, val, href }) => (
-          <div key={label}>
-            <div style={{ color:MUT, fontFamily:F, fontSize:9, letterSpacing:"0.2em", marginBottom:6 }}>{label}</div>
-            <a href={href} target={href.startsWith("http")?"_blank":undefined} rel="noopener noreferrer"
-              style={{ color:AMB, fontFamily:F, fontSize:13, textDecoration:"underline", textDecorationColor:"rgba(255,179,0,.35)" }}>
-              {val}
-            </a>
-          </div>
-        ))}
-        <div>
-          <div style={{ color:MUT, fontFamily:F, fontSize:9, letterSpacing:"0.2em", marginBottom:6 }}>LOCATION</div>
-          <span style={{ color:TXT, fontFamily:F, fontSize:13 }}>Mumbai, India</span>
+          ))}
+          <div style={{ height: 1, background: BORD, margin: "14px 12px" }}/>
+          <a
+            href={CV_PATH} download="Shreya_Khubber_CV.pdf"
+            style={{ display: "flex", alignItems: "center", gap: 8, padding: "7px 12px", color: MUT, fontFamily: F, fontSize: 11, textDecoration: "none", letterSpacing: "0.08em", transition: "color .15s", borderRadius: 2, minHeight: 44 }}
+            onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = TXT}
+            onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = MUT}
+          >
+            <span style={{ fontSize: 12 }}>📄</span>
+            <span>download cv</span>
+          </a>
         </div>
-        <div style={{ height:1, background:"rgba(255,179,0,0.14)" }}/>
-        <a href={CV_PATH} download="Shreya_Khubber_CV.pdf"
-          style={{ display:"inline-flex", alignItems:"center", gap:10, border:"1px solid rgba(255,179,0,0.4)",
-            padding:"10px 18px", color:AMB, fontFamily:F, fontSize:11, letterSpacing:"0.15em",
-            textDecoration:"none", background:"rgba(255,179,0,0.04)", transition:"background .15s" }}
-          onMouseEnter={e=>(e.currentTarget as HTMLElement).style.background="rgba(255,179,0,0.1)"}
-          onMouseLeave={e=>(e.currentTarget as HTMLElement).style.background="rgba(255,179,0,0.04)"}>
-          ↓ DOWNLOAD CV
-        </a>
-      </div>
-    );
-    return null;
-  };
 
-  // ── Render ────────────────────────────────────────────────────────────────
+        {/* Main */}
+        <div ref={mainRef} style={{ flex: 1, overflowY: "auto", padding: "28px 24px 80px", minWidth: 0 }}>
+          {/* Bio strip */}
+          <div style={{ marginBottom: 32, padding: "14px 18px", border: `1px solid ${BORD}`, borderRadius: 2, background: BG2 }}>
+            <div style={{ color: MUT, fontFamily: F, fontSize: 9, letterSpacing: "0.22em", marginBottom: 8 }}>~/career/whoami</div>
+            <p style={{ color: TXT, fontFamily: FS, fontSize: 13, lineHeight: 1.7, opacity: 0.9 }}>
+              Quant analyst at Morningstar, Mumbai. I build fixed income indexes, the kind institutional money actually tracks. Current focus: leveraged loan benchmarks, CLO market research, and index methodology. Previously: freelance market research for a European fintech (WebID) in KYC space.
+            </p>
+            <p style={{ color: MUT, fontFamily: F, fontSize: 11, marginTop: 8, letterSpacing: "0.04em" }}>Finance, code, art. In that order, usually.</p>
+          </div>
+
+          {filtered.length === 0 ? (
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "30vh", color: MUT, fontFamily: F, fontSize: 12, letterSpacing: "0.15em", opacity: 0.6 }}>
+              no files match &ldquo;{search}&rdquo;
+            </div>
+          ) : (
+            filtered.map(section => (
+              <div
+                key={section.id}
+                ref={el => { secRefs.current[section.id] = el; }}
+                data-sid={section.id}
+                style={{ marginBottom: 44, scrollMarginTop: 20 }}
+              >
+                {/* Section heading */}
+                <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 14 }}>
+                  <span style={{ color: ACC, opacity: 0.45, fontFamily: F, fontSize: 11, letterSpacing: "0.1em", flexShrink: 0 }}>{section.path}</span>
+                  <div style={{ flex: 1, height: 1, background: BORD }}/>
+                  <span style={{ color: DIM, fontFamily: F, fontSize: 9, letterSpacing: "0.15em", flexShrink: 0 }}>{section.cards.length} files</span>
+                </div>
+
+                {/* Cards */}
+                <div className="main-grid">
+                  {section.cards.map(card => {
+                    const isOpen = expanded.has(card.id);
+                    const spanTwo = card.special === "skills" || card.special === "toolkit";
+                    return (
+                      <div key={card.id} className={`card ${spanTwo ? "span2" : ""}`} style={spanTwo ? { gridColumn: "span 2" } : {}}>
+                        <div className="card-hdr" onClick={() => toggleCard(card.id)}>
+                          <div style={{ flex: 1, minWidth: 0 }}>
+                            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4, flexWrap: "wrap" }}>
+                              <span style={{ color: TXT, fontFamily: F, fontSize: 12, fontWeight: 600, letterSpacing: "0.04em" }}>{card.company}</span>
+                              {card.badge && (
+                                <span style={{ background: "rgba(255,179,0,0.08)", border: `1px solid rgba(255,179,0,0.4)`, color: ACC, fontFamily: F, fontSize: 8, padding: "2px 6px", letterSpacing: "0.15em", borderRadius: 1 }}>
+                                  {card.badge}
+                                </span>
+                              )}
+                            </div>
+                            <div style={{ color: MUT, fontFamily: F, fontSize: 10, marginBottom: 2, letterSpacing: "0.05em" }}>
+                              {card.dates} · {card.title}
+                            </div>
+                            <div style={{ color: DIM, fontFamily: F, fontSize: 9, letterSpacing: "0.07em" }}>{card.filename}</div>
+                          </div>
+                          <span style={{ color: MUT, fontFamily: F, fontSize: 16, flexShrink: 0, transition: "transform .25s", transform: isOpen ? "rotate(90deg)" : "rotate(0deg)", lineHeight: 1, marginTop: 2 }}>›</span>
+                        </div>
+
+                        <div className={`card-body ${isOpen ? "open" : ""}`}>
+                          <div className="card-body-inner">
+                            {card.special === "skills" ? (
+                              <div style={{ paddingTop: 14 }}>
+                                {SKILLS_DATA.map(s => (
+                                  <div key={s.name} style={{ marginBottom: 12 }}>
+                                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 5 }}>
+                                      <span style={{ color: TXT, fontFamily: F, fontSize: 11 }}>{s.name}</span>
+                                      <span style={{ color: MUT, fontFamily: F, fontSize: 10 }}>{s.pct}%</span>
+                                    </div>
+                                    <div style={{ height: 2, background: DIM, borderRadius: 2, overflow: "hidden" }}>
+                                      <div className="bar-fill" style={{ "--w": `${s.pct}%` } as React.CSSProperties}/>
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            ) : card.special === "toolkit" ? (
+                              <div style={{ paddingTop: 14, overflowX: "auto" }}>
+                                <div style={{ color: MUT, fontFamily: F, fontSize: 10, marginBottom: 10, letterSpacing: "0.07em" }}>SELECT tool, category FROM toolkit;</div>
+                                <table style={{ borderCollapse: "collapse", fontFamily: F, fontSize: 10, width: "100%", minWidth: 260 }}>
+                                  <thead>
+                                    <tr>{["tool", "category"].map(h => <th key={h} style={{ padding: "5px 12px", textAlign: "left", border: `1px solid ${BORD}`, color: MUT, fontWeight: 400, letterSpacing: "0.08em", background: "rgba(255,179,0,0.03)" }}>{h}</th>)}</tr>
+                                  </thead>
+                                  <tbody>
+                                    {TOOLKIT_ROWS.map(([t, c], i) => (
+                                      <tr key={i}>
+                                        <td style={{ padding: "5px 12px", border: `1px solid ${BORD}`, color: TXT }}>{t}</td>
+                                        <td style={{ padding: "5px 12px", border: `1px solid ${BORD}`, color: MUT }}>{c}</td>
+                                      </tr>
+                                    ))}
+                                  </tbody>
+                                </table>
+                                <div style={{ color: ACC, fontFamily: F, fontSize: 10, marginTop: 8, opacity: 0.65 }}>{TOOLKIT_ROWS.length} rows returned.</div>
+                              </div>
+                            ) : (
+                              <ul style={{ paddingTop: 14, listStyle: "none", display: "flex", flexDirection: "column", gap: 9 }}>
+                                {card.bullets.map((b, i) => (
+                                  <li key={i} style={{ display: "flex", gap: 10, alignItems: "flex-start" }}>
+                                    <span style={{ color: MUT, fontFamily: F, fontSize: 12, flexShrink: 0, marginTop: 1 }}>›</span>
+                                    <span style={{ color: TXT, fontFamily: FS, fontSize: 13, lineHeight: 1.65 }}>{b}</span>
+                                  </li>
+                                ))}
+                              </ul>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            ))
+          )}
+
+          {/* Contact footer */}
+          <div style={{ paddingTop: 28, borderTop: `1px solid ${BORD}`, marginTop: 8 }}>
+            <div style={{ color: MUT, fontFamily: F, fontSize: 10, letterSpacing: "0.18em", marginBottom: 18, opacity: 0.65 }}>~/career/contact/</div>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "20px 36px" }}>
+              {[
+                { label: "EMAIL",     val: "shreya.khubber@gmail.com",      href: "mailto:shreya.khubber@gmail.com" },
+                { label: "LINKEDIN",  val: "linkedin.com/in/shreya-khubber", href: "https://linkedin.com/in/shreya-khubber" },
+                { label: "GITHUB",    val: "github.com/shreya-khubber",      href: "https://github.com/shreya-khubber" },
+                { label: "INSTAGRAM", val: "@migratinglife",                 href: "https://www.instagram.com/migratinglife/" },
+              ].map(({ label, val, href }) => (
+                <div key={label}>
+                  <div style={{ color: DIM, fontFamily: F, fontSize: 8, letterSpacing: "0.24em", marginBottom: 5 }}>{label}</div>
+                  <a href={href} target={href.startsWith("http") ? "_blank" : undefined} rel="noopener noreferrer"
+                    style={{ color: MUT, fontFamily: F, fontSize: 11, textDecoration: "underline", textDecorationColor: `rgba(94,116,88,0.3)`, transition: "color .15s", letterSpacing: "0.04em" }}
+                    onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = TXT}
+                    onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = MUT}
+                  >{val}</a>
+                </div>
+              ))}
+              <div>
+                <div style={{ color: DIM, fontFamily: F, fontSize: 8, letterSpacing: "0.24em", marginBottom: 5 }}>LOCATION</div>
+                <span style={{ color: MUT, fontFamily: F, fontSize: 11 }}>Mumbai, India</span>
+              </div>
+            </div>
+            <div style={{ marginTop: 20 }}>
+              <a href={CV_PATH} download="Shreya_Khubber_CV.pdf"
+                style={{ display: "inline-flex", alignItems: "center", gap: 10, border: `1px solid ${BORD}`, padding: "10px 18px", color: MUT, fontFamily: F, fontSize: 11, letterSpacing: "0.14em", textDecoration: "none", background: "transparent", transition: "all .15s", borderRadius: 2, minHeight: 44 }}
+                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = TXT; (e.currentTarget as HTMLElement).style.borderColor = "rgba(72,110,72,0.5)"; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = MUT; (e.currentTarget as HTMLElement).style.borderColor = BORD; }}
+              >↓ download cv</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Status bar */}
+      <div style={{ height: 30, flexShrink: 0, borderTop: `1px solid ${BORD}`, background: BG2, display: "flex", alignItems: "center", padding: "0 16px", gap: 16, zIndex: 20 }}>
+        <span style={{ color: MUT, fontFamily: F, fontSize: 10, letterSpacing: "0.1em" }}>{totalCards} files open</span>
+        <span style={{ color: DIM, fontSize: 9 }}>·</span>
+        <span style={{ color: MUT, fontFamily: F, fontSize: 10, letterSpacing: "0.08em" }}>last modified 2025</span>
+        <span style={{ color: DIM, fontSize: 9 }}>·</span>
+        <span style={{ color: MUT, fontFamily: F, fontSize: 10, letterSpacing: "0.08em" }}>press / to search</span>
+        <span style={{ marginLeft: "auto", color: DIM, fontFamily: F, fontSize: 9, letterSpacing: "0.12em", textTransform: "uppercase" }}>{activeSection}</span>
+      </div>
+    </div>
+  );
+
   return (
     <>
-      <style suppressHydrationWarning>{`
-        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=JetBrains+Mono:wght@400&display=swap');
-        *{box-sizing:border-box} html,body{margin:0;padding:0;background:#0A0A0A;height:100%}
-        .scn{position:relative}
-        .scn::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.03) 2px,rgba(0,0,0,0.03) 4px);pointer-events:none;z-index:1}
-        @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
-        .cur{display:inline-block;width:.56em;height:1em;background:#FFB300;vertical-align:text-bottom;animation:blink 1.1s step-end infinite;margin-left:2px;flex-shrink:0}
-        .chip{border:1px solid rgba(255,179,0,.28);color:rgba(255,179,0,.5);font-family:"Berkeley Mono","Fira Code","JetBrains Mono",monospace;font-size:11px;padding:3px 10px;background:transparent;cursor:pointer;transition:all .15s;letter-spacing:.04em;white-space:nowrap}
-        .chip:hover{border-color:#FFB300;color:#FFB300;background:rgba(255,179,0,.06)}
-        @keyframes fadeIn{from{opacity:0}to{opacity:1}}
-        @keyframes fillBar{from{width:0}to{width:var(--pct)}}
-        .skill-bar{height:100%;background:#FFB300;border-radius:2px;animation:fillBar .6s ease forwards}
-        ::-webkit-scrollbar{width:3px} ::-webkit-scrollbar-track{background:transparent} ::-webkit-scrollbar-thumb{background:#2A2000;border-radius:2px}
-        @media(max-width:767px){.split-wrap{flex-direction:column!important}.left-panel{width:100%!important;height:55vh!important}.right-panel{flex:none!important;height:45vh!important}.divider{width:100%!important;height:1px!important}.chip{font-size:13px;padding:6px 14px}}
-      `}</style>
-
-      <div className="split-wrap" style={{ position:"fixed", inset:0, background:"#0A0A0A", display:"flex", overflow:"hidden" }}
-        onClick={() => inputRef.current?.focus()}>
-
-        {/* ── LEFT: terminal ── */}
-        <div className="left-panel" style={{ width:"58%", display:"flex", flexDirection:"column", overflow:"hidden", flexShrink:0 }}>
-          <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between",
-            padding:"10px 18px", borderBottom:"1px solid #1A1500", flexShrink:0 }}>
-            <div style={{ display:"flex", alignItems:"center", gap:10 }}>
-              <div style={{ display:"flex", gap:6 }}>
-                <div style={{ width:11, height:11, borderRadius:"50%", background:"#FF5F57" }}/>
-                <div style={{ width:11, height:11, borderRadius:"50%", background:"#FFBD2E" }}/>
-                <div style={{ width:11, height:11, borderRadius:"50%", background:"#28C840" }}/>
-              </div>
-              <a href="/" style={{ color:AMB, fontSize:11, fontFamily:F, letterSpacing:"0.18em", textDecoration:"none", fontWeight:600 }}
-                onClick={e => e.stopPropagation()}>← icicle</a>
-            </div>
-            <span style={{ color:AMB, fontSize:11, letterSpacing:"0.28em", opacity:.85, fontFamily:F }}>ANALYST.WORKSPACE</span>
-          </div>
-
-          <div ref={outRef} className="scn" style={{ flex:1, overflowY:"auto", padding:"18px 24px 6px", minHeight:0 }}>
-            {lines.map(l =>
-              l.href ? (
-                <a key={l.id} href={l.href} target={l.href.startsWith("http")||l.href.endsWith(".pdf")||l.href.endsWith(".xlsx")?"_blank":undefined}
-                  rel="noopener noreferrer" onClick={e=>e.stopPropagation()}
-                  style={{ display:"block", color:l.c, fontSize:"clamp(11px,1.2vw,13px)", lineHeight:1.75,
-                    whiteSpace:"pre-wrap", wordBreak:"break-all", fontFamily:F, textDecoration:"underline",
-                    textDecorationColor:"rgba(255,179,0,.35)", position:"relative", zIndex:2 }}>{l.t}</a>
-              ) : (
-                <div key={l.id} style={{ color:l.c, fontSize:"clamp(11px,1.2vw,13px)", lineHeight:1.75,
-                  whiteSpace:"pre-wrap", wordBreak:"break-all", fontFamily:F, position:"relative", zIndex:2 }}>{l.t}</div>
-              )
-            )}
-            {partial && (
-              <div style={{ color:partial.c, fontSize:"clamp(11px,1.2vw,13px)", lineHeight:1.75,
-                whiteSpace:"pre-wrap", fontFamily:F, position:"relative", zIndex:2 }}>{partial.t}</div>
-            )}
-          </div>
-
-          <div style={{ padding:"6px 20px", display:"flex", gap:7, flexWrap:"wrap", flexShrink:0, borderTop:"1px solid #100E00" }}>
-            {chips.map(chip => (
-              <button key={chip} className="chip"
-                onClick={e => { e.stopPropagation(); setInput(""); exec(chip); }}>{chip}</button>
-            ))}
-          </div>
-
-          <div style={{ display:"flex", alignItems:"center", padding:"7px 20px 14px", flexShrink:0, borderTop:"1px solid #100E00" }}
-            onClick={e => { e.stopPropagation(); inputRef.current?.focus(); }}>
-            <span style={{ color:AMB, fontSize:"clamp(11px,1.2vw,13px)", marginRight:8, whiteSpace:"nowrap", fontFamily:F, flexShrink:0 }}>
-              ANALYST:~$
-            </span>
-            <div style={{ flex:1, display:"flex", alignItems:"center", minWidth:0, overflow:"hidden" }}>
-              <input ref={inputRef} value={input}
-                onChange={e => { setInput(e.target.value); if(running.current) flush(); }}
-                onKeyDown={onKey}
-                onBlur={() => { setTimeout(() => inputRef.current?.focus(), 80); }}
-                autoFocus spellCheck={false} autoComplete="off" autoCorrect="off" autoCapitalize="off"
-                style={{
-                  // Width tracks character count (font is monospace, so ch == one glyph).
-                  // The cursor span below is placed immediately after, so it lands at the
-                  // end of typed text instead of at the flex container's right edge.
-                  width: `${input.length}ch`,
-                  maxWidth: "100%",
-                  background:"transparent", border:"none", outline:"none",
-                  color:AMB, fontFamily:F, fontSize:"clamp(11px,1.2vw,13px)",
-                  caretColor:"transparent", minWidth:0, padding:0,
-                }}/>
-              <span className="cur" style={{ flexShrink:0 }}/>
-            </div>
-          </div>
-        </div>
-
-        {/* ── Divider ── */}
-        <div className="divider" style={{ width:1, background:"rgba(255,179,0,0.18)", flexShrink:0 }}/>
-
-        {/* ── RIGHT: preview ── */}
-        <div className="right-panel" style={{ flex:1, display:"flex", flexDirection:"column", overflow:"hidden", minWidth:0 }}>
-          <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between",
-            padding:"10px 18px", borderBottom:"1px solid #1A1500", flexShrink:0 }}>
-            <span style={{ color:MUT, fontFamily:F, fontSize:10, letterSpacing:"0.2em" }}>PREVIEW</span>
-            <span style={{ color:AMB, fontFamily:F, fontSize:11, letterSpacing:"0.15em", opacity:.8 }}>
-              {previewLabel[preview]}
-            </span>
-            <span style={{ color:DIM, fontFamily:F, fontSize:10, letterSpacing:"0.1em" }}>READ-ONLY</span>
-          </div>
-          <div key={pvKey} style={{ flex:1, overflowY:"auto", animation:"fadeIn 200ms ease" }}>
-            {renderPreview()}
-          </div>
-        </div>
-      </div>
+      <style suppressHydrationWarning>{css}</style>
+      {explorer}
+      {bootOverlay}
     </>
   );
 }

@@ -53,8 +53,8 @@ export default function ContactPage() {
             transition={{ duration: 0.7, delay: 0.5 }}
             className="font-serif text-g-dim text-lg italic leading-relaxed mb-12"
           >
-            I&apos;m always open to interesting conversations — whether it&apos;s
-            about a role, a collaboration, or an idea you can&apos;t stop thinking about.
+            I&apos;m always open to interesting conversations — a collaboration,
+            a half-formed idea, or something you can&apos;t stop thinking about.
           </motion.p>
 
           {/* Links */}
