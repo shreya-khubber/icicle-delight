@@ -81,6 +81,12 @@ const RESEARCH_BOOKS: Book[] = [
     status:"Completed", outcome:"Geographic expansion language in MD&A correlated with ~5% YoY stock outperformance in FY21-22.",
     href:"/Research%20Work/Finance%20Projects/V-Guard%20MD%26A%20Analysis.pdf" },
 
+  { id:27, title:"BKLN Signal",    spine:"Finance Projects", leather:CL_FIN,   goldHex:"#8aacdc", width:76, height:220, year:"2026", tag:"Finance Research · LLM Pipeline",
+    brief:"A thesis-first LLM pipeline for a leveraged loan portfolio manager — could it have spotted dangerous Software concentration in BKLN before the sector fell 700bps in Q1 2026?",
+    description:"Built for Infer Edge, this end-to-end agentic pipeline fetches market commentary, per-sector credit news, macro data, and per-issuer news (EXA semantic search, 15-Jan-2026 cutoff), synthesises them into a structured directional WorldView using GPT-4o, and validates every sector call through a three-level citation verification loop and a per-sector LLM validation agent. FinBERT runs on each issuer's news to corroborate or contradict the sector thesis. The pipeline maps final conviction onto the BKLN top-20 holdings (SEC N-PORT filing, Nov-2025) using severity-weighted bps impact scoring. Software — nine of nineteen holdings, 37% of portfolio weight — was flagged BEARISH at 0.85 conviction. The sector fell ~700bps in Q1 2026. The pipeline scored 4/7 sector thesis hits and estimated ~196bps of loss prevention versus a hold-all benchmark.",
+    status:"Completed", outcome:"4/7 sector hits · Software flagged BEARISH 0.85 · ~196bps estimated loss prevention vs. benchmark.",
+    href:"/Research%20Work/Finance%20Projects/Sentiment%20Analysis%20Project.pdf" },
+
   // ── Fixed Income ──────────────────────────────────────────────────────────
   { id:20, title:"Duration & ZCB", spine:"Fixed Income",     leather:CL_FIXED, goldHex:"#c8b898", width:58, height:198, year:"2024", tag:"Fixed Income · Rates",
     brief:"Derives the precise ZCB duration formula D_eff = T/(1+y) — always slightly less than maturity — and shows the convexity gap with a worked numerical example.",
@@ -122,7 +128,7 @@ const RESEARCH_BOOKS: Book[] = [
 ];
 
 const ROW1 = RESEARCH_BOOKS.slice(0, 6);
-const ROW2 = RESEARCH_BOOKS.slice(6);
+const ROW2 = RESEARCH_BOOKS.slice(6, 12);
 
 // ── Book spine ────────────────────────────────────────────────────────────────
 
@@ -292,7 +298,7 @@ function LeftPanel({ hoveredBook }: { hoveredBook: Book | null }) {
 function RightPanel() {
   const entries = [
     ["Startup Analysis",  "2"],
-    ["Financial Analysis","2"],
+    ["Financial Analysis","3"],
     ["Product Breakdown", "2"],
     ["Fixed Income",      "2"],
     ["Commentary",        "2"],
@@ -314,7 +320,7 @@ function RightPanel() {
         The Collection
       </p>
       <p style={{ fontFamily:"'Cormorant Garamond',serif", fontSize:34, color:"#e8dcc8", fontWeight:300, marginBottom:4, lineHeight:1 }}>
-        11
+        12
       </p>
       <p style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:10, letterSpacing:"0.22em", color:"rgba(201,168,76,0.45)", textTransform:"uppercase", marginBottom:18 }}>
         Volumes
@@ -531,7 +537,7 @@ export default function WandererPage() {
             /* ── MOBILE: flat scrollable list ── */
             <div style={{ padding:"16px 16px 40px" }}>
               <p style={{ fontFamily:"'Cormorant Garamond',serif", fontSize:20, color:"rgba(201,168,76,0.8)", fontStyle:"italic", textAlign:"center", marginBottom:4 }}>Research Vault</p>
-              <p style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:7, letterSpacing:"0.3em", color:"rgba(201,168,76,0.3)", textTransform:"uppercase", textAlign:"center", marginBottom:20 }}>11 Documents · tap to read</p>
+              <p style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:7, letterSpacing:"0.3em", color:"rgba(201,168,76,0.3)", textTransform:"uppercase", textAlign:"center", marginBottom:20 }}>12 Documents · tap to read</p>
               <div style={{ height:1, background:"linear-gradient(to right,transparent,rgba(201,168,76,0.3),transparent)", marginBottom:16 }} />
               {RESEARCH_BOOKS.map((book) => (
                 <button key={book.id} onClick={() => setActiveBook(book)}
@@ -560,7 +566,7 @@ export default function WandererPage() {
                     <div style={{ padding:"16px 24px 12px", textAlign:"center", borderBottom:"1px solid rgba(201,168,76,0.15)" }}>
                       <div style={{ height:1, background:"linear-gradient(to right,transparent,rgba(201,168,76,0.4),transparent)", marginBottom:10 }} />
                       <p style={{ fontFamily:"'Cormorant Garamond',serif", fontSize:22, color:"rgba(201,168,76,0.75)", fontStyle:"italic", fontWeight:300, letterSpacing:"0.12em" }}>Research Vault</p>
-                      <p style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:7, letterSpacing:"0.3em", color:"rgba(201,168,76,0.3)", textTransform:"uppercase", marginTop:4 }}>Research Vault · 11 Documents</p>
+                      <p style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:7, letterSpacing:"0.3em", color:"rgba(201,168,76,0.3)", textTransform:"uppercase", marginTop:4 }}>Research Vault · 12 Documents</p>
                       <div style={{ height:1, background:"linear-gradient(to right,transparent,rgba(201,168,76,0.25),transparent)", marginTop:10 }} />
                     </div>
                     <div style={{ padding:"16px 0 0" }}>

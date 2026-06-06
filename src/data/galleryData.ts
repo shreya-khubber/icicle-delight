@@ -295,6 +295,29 @@ export const wandererBooks: WandererBook[] = [
     links: [{ label: "Explore prompt set", href: "#" }],
   },
   {
+    id: "sentiment-analysis",
+    title: "BKLN Signal Agent",
+    category: "Finance Research",
+    status: "Shipped",
+    timeframe: "Jan 2026",
+    tags: ["LLM", "fixed income", "leveraged loans", "FinBERT"],
+    width: "112px",
+    height: "245px",
+    spineGradient: "linear-gradient(180deg, #1a3a4a, #0d1f28)",
+    summary: "A thesis-first LLM pipeline that asks: could an agent have spotted the BKLN portfolio's dangerous Software concentration before the sector fell 700bps?",
+    longDescription:
+      "I built an end-to-end agentic pipeline for leveraged loan portfolio managers. Given only information available before 15-Jan-2026, the system fetches market commentary, per-sector credit news, macro data, and issuer news; synthesises a directional WorldView using GPT-4o; validates every sector call through citation verification and a per-sector LLM validation agent; and maps the thesis onto the top-20 BKLN holdings to produce a ranked impact table.",
+    whatIDid:
+      "I designed a four-pass EXA semantic search pipeline, wrote a synthesis prompt with source-weighting rules and a strict citation contract, implemented 3-level fuzzy citation verification, ran FinBERT on per-issuer news for corroboration, and built a severity-bps impact scorer against real SEC N-PORT portfolio weights.",
+    whatILearned:
+      "Getting LLMs to stay honest about their sources is harder than getting them to be directionally correct. The citation verification loop caught more hallucinations than I expected, and the feedback loop that re-synthesises flagged sectors added real signal. FinBERT corroboration was the most useful check on over-confident sector calls.",
+    outcome:
+      "The agent scored 4/7 sector thesis hits and estimated ~196bps of loss prevention versus a hold-all benchmark. Software was flagged BEARISH with 0.85 conviction — the sector fell 700bps in Q1 2026.",
+    links: [
+      { label: "View project writeup", href: "/Research Work/Finance Projects/Sentiment Analysis Project.pdf" },
+    ],
+  },
+  {
     id: "meaning-maps",
     title: "Meaning Map",
     category: "Research",

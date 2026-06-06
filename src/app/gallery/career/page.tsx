@@ -90,6 +90,12 @@ const TMD_B = [
 const EV_B = [
   "Compiled a detailed report by surveying 1000+ individuals to understand sentiment towards EV Charging Infrastructure in India",
 ];
+const SENTIMENT_B = [
+  "Built a thesis-first LLM pipeline for leveraged loan portfolio managers: fetches market commentary, sector credit news, macro data, and issuer news via EXA semantic search with a hard 15-Jan-2026 cutoff",
+  "Synthesises 4 data layers into a structured directional WorldView using GPT-4o; validates every sector call through a citation-verification loop (3-level fuzzy match) and a per-sector LLM validation agent",
+  "Runs FinBERT on per-issuer news to corroborate or contradict the sector thesis; maps final conviction to BKLN top-20 holdings (SEC N-PORT filing) with severity-weighted impact scoring in bps",
+  "Flagged 37% Software concentration in the BKLN portfolio — the sector fell ~700bps in Q1 2026; pipeline scored 4/7 sector thesis hits and estimated ~196bps loss prevention vs. hold-all benchmark",
+];
 
 const SKILLS_DATA = [
   { name: "MS Excel",    pct: 85 },
@@ -128,6 +134,7 @@ interface CardData {
   badge?: string;
   bullets: string[];
   special?: "skills" | "toolkit";
+  link?: { label: string; href: string };
 }
 interface SectionData {
   id: string;
@@ -187,6 +194,7 @@ const SECTIONS: SectionData[] = [
       { id: "vguard",     filename: "v-guard.pdf",    company: "V-Guard Industries", title: "Business Analysis, Prof. Rajan Pandey, BITS Pilani",   dates: "Aug – Dec 2022",  bullets: VGUARD_B },
       { id: "tmd",        filename: "tuned-mass-damper.md", company: "Tuned Mass Damper", title: "Engineering Project, Prof. Puneet Mishra, BITS Pilani", dates: "Jan – May 2023",  bullets: TMD_B },
       { id: "ev-charging",filename: "ev-charging.md", company: "EV Charging in India", title: "Research Project, Prof. Tanu Shukla, BITS Pilani",   dates: "Sep – Dec 2021",  bullets: EV_B },
+      { id: "sentiment",  filename: "sentiment-analysis.pdf", company: "BKLN Signal Agent", title: "LLM Sentiment Pipeline for Leveraged Loans, Infer Edge", dates: "Jan 2026", bullets: SENTIMENT_B, link: { label: "View project writeup", href: "/Research Work/Finance Projects/Sentiment Analysis Project.pdf" } },
     ],
   },
 ];
@@ -554,14 +562,30 @@ export default function CareerPage() {
                                 <div style={{ color: ACC, fontFamily: F, fontSize: 10, marginTop: 8, opacity: 0.65 }}>{TOOLKIT_ROWS.length} rows returned.</div>
                               </div>
                             ) : (
-                              <ul style={{ paddingTop: 14, listStyle: "none", display: "flex", flexDirection: "column", gap: 9 }}>
-                                {card.bullets.map((b, i) => (
-                                  <li key={i} style={{ display: "flex", gap: 10, alignItems: "flex-start" }}>
-                                    <span style={{ color: MUT, fontFamily: F, fontSize: 12, flexShrink: 0, marginTop: 1 }}>›</span>
-                                    <span style={{ color: TXT, fontFamily: FS, fontSize: 13, lineHeight: 1.65 }}>{b}</span>
-                                  </li>
-                                ))}
-                              </ul>
+                              <>
+                                <ul style={{ paddingTop: 14, listStyle: "none", display: "flex", flexDirection: "column", gap: 9 }}>
+                                  {card.bullets.map((b, i) => (
+                                    <li key={i} style={{ display: "flex", gap: 10, alignItems: "flex-start" }}>
+                                      <span style={{ color: MUT, fontFamily: F, fontSize: 12, flexShrink: 0, marginTop: 1 }}>›</span>
+                                      <span style={{ color: TXT, fontFamily: FS, fontSize: 13, lineHeight: 1.65 }}>{b}</span>
+                                    </li>
+                                  ))}
+                                </ul>
+                                {card.link && (
+                                  <div style={{ marginTop: 14 }}>
+                                    <a
+                                      href={card.link.href}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      style={{ fontFamily: F, fontSize: 10, letterSpacing: "0.14em", color: MUT, textDecoration: "underline", textDecorationColor: `rgba(94,116,88,0.3)`, transition: "color .15s" }}
+                                      onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = TXT}
+                                      onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = MUT}
+                                    >
+                                      {card.link.label} ↗
+                                    </a>
+                                  </div>
+                                )}
+                              </>
                             )}
                           </div>
                         </div>
