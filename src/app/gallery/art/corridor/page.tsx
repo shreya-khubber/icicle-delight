@@ -147,7 +147,7 @@ export default function CorridorPage() {
               className="mt-3 font-serif italic text-sm"
               style={{ color: "rgba(232,220,200,0.6)" }}
             >
-              Scroll to walk · {PAINTINGS.length} works
+              Scroll to walk · 24 works
             </p>
           </div>
 

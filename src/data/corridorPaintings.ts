@@ -11,6 +11,9 @@ export type PaintingDef = {
 };
 
 export const PAINTINGS: PaintingDef[] = [
+  { id: 0,  side: "right", panelIndex: 1, src: "/paintings/N1.jpeg", width: 3024, height: 4032,
+    name: "Tally", origin: "The oldest idea in finance",
+    description: `Before contracts, before interest rates, before the index — there was a notch on a stick. The tally stick is one of the earliest pieces of evidence that humans understood something profound: that value could be deferred. That a debt recorded in wood today could be honoured in grain tomorrow. That time itself could generate worth.\n\nThe three black bars are notches. Each one a mark of something owed, something promised, something not yet settled. Inside the stick, gold moves the way capital moves — organic, pressured, finding its own shape within the constraints carved around it.\n\nThe stock chart running alongside is not a contrast. It is the same idea, thirty thousand years later, abstracted into a line that still rises and falls for the same reason the notches were cut in the first place: someone believed that waiting had value. That deferral was not a delay but the mechanism itself.\n\nFinance did not begin in a trading pit. It began with a piece of wood and the idea that a promise could outlast the moment it was made.` },
   { id: 1,  side: "left",  panelIndex: 0, src: "/paintings/1.jpg",  width: 1074, height: 1342,
     name: "Munroe", origin: "Inspiration from Pinterest",
     description: `The reference was Monroe. The result was something else: a face that holds together from a distance and fractures up close, slightly asymmetrical, more feeling than fact. The title is a misspelling. It stayed.` },
