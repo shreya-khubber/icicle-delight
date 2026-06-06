@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useRef, useState, useCallback, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import dynamic from "next/dynamic";
@@ -27,12 +27,43 @@ const PANELS = [
 // Tall scroll surface that maps to camera Z inside the canvas.
 const SCROLL_HEIGHT_PX = 14000;
 
-export default function CorridorPage() {
+function CorridorPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   const [active, setActive] = useState<number | null>(null);
+  const [copied, setCopied] = useState(false);
   const lastActiveId = useRef(PAINTINGS[0].id);
   if (active !== null) lastActiveId.current = active;
+
+  const toSlug = (name: string) => name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+
+  // Open painting from ?painting= param on load
+  useEffect(() => {
+    const slug = searchParams.get("painting");
+    if (slug) {
+      const p = PAINTINGS.find((p) => toSlug(p.name) === slug);
+      if (p) setActive(p.id);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const openPainting = useCallback((id: number) => {
+    setActive(id);
+    const p = PAINTINGS.find((p) => p.id === id);
+    if (p) router.replace(`?painting=${toSlug(p.name)}`, { scroll: false });
+  }, [router]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const closePainting = useCallback(() => {
+    setActive(null);
+    router.replace("?", { scroll: false });
+  }, [router]);
+
+  const sharePainting = useCallback(async () => {
+    await navigator.clipboard.writeText(window.location.href);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  }, []);
 
   // HUD opacities + CTA visibility — all driven directly from the DOM each
   // animation frame, not React state, so the scene rendering stays unblocked.
@@ -74,7 +105,7 @@ export default function CorridorPage() {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
-        if (active !== null) { setActive(null); return; }
+        if (active !== null) { closePainting(); return; }
         router.push("/");
         return;
       }
@@ -120,7 +151,7 @@ export default function CorridorPage() {
           {/* WebGL scene fills the viewport behind the HUD */}
           <div className="absolute inset-0">
             <CorridorScene
-              onOpen={(id) => setActive(id)}
+              onOpen={openPainting}
               onContact={() => router.push("/contact")}
             />
           </div>
@@ -219,7 +250,7 @@ export default function CorridorPage() {
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.35 }}
-                onClick={() => setActive(null)}
+                onClick={closePainting}
                 style={{
                   position: "fixed",
                   inset: 0,
@@ -247,25 +278,20 @@ export default function CorridorPage() {
                 }}
                 className="flex-col md:flex-row"
               >
-                <button
-                  onClick={() => setActive(null)}
-                  style={{
-                    position: "absolute",
-                    top: 20,
-                    right: 24,
-                    zIndex: 10,
-                    background: "none",
-                    border: "none",
-                    cursor: "pointer",
-                    fontFamily: "'JetBrains Mono', monospace",
-                    fontSize: 8,
-                    letterSpacing: "0.3em",
-                    color: "#7aadad",
-                    textTransform: "uppercase",
-                  }}
-                >
-                  X Close
-                </button>
+                <div style={{ position: "absolute", top: 20, right: 24, zIndex: 10, display: "flex", alignItems: "center", gap: 14 }}>
+                  <button
+                    onClick={sharePainting}
+                    style={{ background: "none", border: "none", cursor: "pointer", fontFamily: "'JetBrains Mono', monospace", fontSize: 8, letterSpacing: "0.3em", color: copied ? "#4AE09A" : "#7aadad", textTransform: "uppercase", transition: "color 0.2s" }}
+                  >
+                    {copied ? "Copied ✓" : "Share ↗"}
+                  </button>
+                  <button
+                    onClick={closePainting}
+                    style={{ background: "none", border: "none", cursor: "pointer", fontFamily: "'JetBrains Mono', monospace", fontSize: 8, letterSpacing: "0.3em", color: "#7aadad", textTransform: "uppercase" }}
+                  >
+                    X Close
+                  </button>
+                </div>
 
                 {/* Left — painting */}
                 <div
@@ -443,5 +469,13 @@ export default function CorridorPage() {
         })()}
       </AnimatePresence>
     </main>
+  );
+}
+
+export default function CorridorPageWrapper() {
+  return (
+    <Suspense>
+      <CorridorPage />
+    </Suspense>
   );
 }

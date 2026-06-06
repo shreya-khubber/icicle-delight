@@ -312,7 +312,7 @@ export const wandererBooks: WandererBook[] = [
     whatILearned:
       "Getting LLMs to stay honest about their sources is harder than getting them to be directionally correct. The citation verification loop caught more hallucinations than I expected, and the feedback loop that re-synthesises flagged sectors added real signal. FinBERT corroboration was the most useful check on over-confident sector calls.",
     outcome:
-      "The agent scored 4/7 sector thesis hits and estimated ~196bps of loss prevention versus a hold-all benchmark. Software was flagged BEARISH with 0.85 conviction — the sector fell 700bps in Q1 2026.",
+      "The agent scored 4/7 sector thesis hits and estimated ~196bps of loss prevention versus a hold-all benchmark. Software was flagged BEARISH with 0.85 conviction. The sector fell 700bps in Q1 2026.",
     links: [
       { label: "View project writeup", href: "/Research Work/Finance Projects/Sentiment Analysis Project.pdf" },
     ],

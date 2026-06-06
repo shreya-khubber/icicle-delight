@@ -194,7 +194,7 @@ const SECTIONS: SectionData[] = [
       { id: "vguard",     filename: "v-guard.pdf",    company: "V-Guard Industries", title: "Business Analysis, Prof. Rajan Pandey, BITS Pilani",   dates: "Aug – Dec 2022",  bullets: VGUARD_B },
       { id: "tmd",        filename: "tuned-mass-damper.md", company: "Tuned Mass Damper", title: "Engineering Project, Prof. Puneet Mishra, BITS Pilani", dates: "Jan – May 2023",  bullets: TMD_B },
       { id: "ev-charging",filename: "ev-charging.md", company: "EV Charging in India", title: "Research Project, Prof. Tanu Shukla, BITS Pilani",   dates: "Sep – Dec 2021",  bullets: EV_B },
-      { id: "sentiment",  filename: "sentiment-analysis.pdf", company: "BKLN Signal Agent", title: "LLM Sentiment Pipeline for Leveraged Loans, Infer Edge", dates: "Jan 2026", bullets: SENTIMENT_B, link: { label: "View project writeup", href: "/Research Work/Finance Projects/Sentiment Analysis Project.pdf" } },
+      { id: "sentiment",  filename: "sentiment-analysis.pdf", company: "BKLN Signal Agent", title: "LLM Sentiment Pipeline for Leveraged Loans", dates: "Jan 2026", bullets: SENTIMENT_B, link: { label: "View project writeup", href: "/Research Work/Finance Projects/Sentiment Analysis Project.pdf" } },
     ],
   },
 ];

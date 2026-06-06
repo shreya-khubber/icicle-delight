@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect, useCallback, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { galleryPieces } from "@/data/galleryData";
@@ -82,8 +82,8 @@ const RESEARCH_BOOKS: Book[] = [
     href:"/Research%20Work/Finance%20Projects/V-Guard%20MD%26A%20Analysis.pdf" },
 
   { id:27, title:"BKLN Signal",    spine:"Finance Projects", leather:CL_FIN,   goldHex:"#8aacdc", width:76, height:220, year:"2026", tag:"Finance Research · LLM Pipeline",
-    brief:"A thesis-first LLM pipeline for a leveraged loan portfolio manager — could it have spotted dangerous Software concentration in BKLN before the sector fell 700bps in Q1 2026?",
-    description:"Built for Infer Edge, this end-to-end agentic pipeline fetches market commentary, per-sector credit news, macro data, and per-issuer news (EXA semantic search, 15-Jan-2026 cutoff), synthesises them into a structured directional WorldView using GPT-4o, and validates every sector call through a three-level citation verification loop and a per-sector LLM validation agent. FinBERT runs on each issuer's news to corroborate or contradict the sector thesis. The pipeline maps final conviction onto the BKLN top-20 holdings (SEC N-PORT filing, Nov-2025) using severity-weighted bps impact scoring. Software — nine of nineteen holdings, 37% of portfolio weight — was flagged BEARISH at 0.85 conviction. The sector fell ~700bps in Q1 2026. The pipeline scored 4/7 sector thesis hits and estimated ~196bps of loss prevention versus a hold-all benchmark.",
+    brief:"A thesis-first LLM pipeline for a leveraged loan portfolio manager. Could it have spotted dangerous Software concentration in BKLN before the sector fell 700bps in Q1 2026?",
+    description:"An end-to-end agentic pipeline that fetches market commentary, per-sector credit news, macro data, and per-issuer news (EXA semantic search, 15-Jan-2026 cutoff), synthesises them into a structured directional WorldView using GPT-4o, and validates every sector call through a three-level citation verification loop and a per-sector LLM validation agent. FinBERT runs on each issuer's news to corroborate or contradict the sector thesis. The pipeline maps final conviction onto the BKLN top-20 holdings (SEC N-PORT filing, Nov-2025) using severity-weighted bps impact scoring. Software (nine of nineteen holdings, 37% of portfolio weight) was flagged BEARISH at 0.85 conviction. The sector fell ~700bps in Q1 2026. The pipeline scored 4/7 sector thesis hits and estimated ~196bps of loss prevention versus a hold-all benchmark.",
     status:"Completed", outcome:"4/7 sector hits · Software flagged BEARISH 0.85 · ~196bps estimated loss prevention vs. benchmark.",
     href:"/Research%20Work/Finance%20Projects/Sentiment%20Analysis%20Project.pdf" },
 
@@ -357,6 +357,12 @@ function RightPanel() {
 
 function BookModal({ book, onClose, isMobile }: { book: Book; onClose: () => void; isMobile: boolean }) {
   const gold = hex2rgb(book.goldHex);
+  const [copied, setCopied] = useState(false);
+  const handleShare = async () => {
+    await navigator.clipboard.writeText(window.location.href);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   if (isMobile) {
     return (
@@ -371,7 +377,10 @@ function BookModal({ book, onClose, isMobile }: { book: Book; onClose: () => voi
           <div style={{ height:4, background:book.leather, flexShrink:0 }} />
           <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"12px 20px", borderBottom:"1px solid rgba(201,168,76,0.12)", flexShrink:0 }}>
             <p style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:8, letterSpacing:"0.28em", color:"#c9a84c", textTransform:"uppercase" }}>{book.tag}</p>
-            <button onClick={onClose} style={{ all:"unset", cursor:"pointer", fontFamily:"'JetBrains Mono',monospace", fontSize:9, letterSpacing:"0.3em", color:"rgba(201,168,76,0.6)", textTransform:"uppercase" }}>✕ Close</button>
+            <div style={{ display:"flex", alignItems:"center", gap:16 }}>
+              <button onClick={handleShare} style={{ all:"unset", cursor:"pointer", fontFamily:"'JetBrains Mono',monospace", fontSize:9, letterSpacing:"0.3em", color: copied ? "#34d399" : "rgba(201,168,76,0.6)", textTransform:"uppercase", transition:"color 0.2s" }}>{copied ? "Copied ✓" : "Share ↗"}</button>
+              <button onClick={onClose} style={{ all:"unset", cursor:"pointer", fontFamily:"'JetBrains Mono',monospace", fontSize:9, letterSpacing:"0.3em", color:"rgba(201,168,76,0.6)", textTransform:"uppercase" }}>✕ Close</button>
+            </div>
           </div>
 
           {/* Scrollable content */}
@@ -434,9 +443,14 @@ function BookModal({ book, onClose, isMobile }: { book: Book; onClose: () => voi
 
         {/* Text */}
         <div style={{ flex:1, padding:"60px 48px 44px", overflowY:"auto", borderLeft:"1px solid rgba(201,168,76,0.1)", display:"flex", flexDirection:"column", justifyContent:"center" }}>
-          <button onClick={onClose} style={{ position:"absolute", top:18, right:22, background:"none", border:"none", cursor:"pointer", fontFamily:"'JetBrains Mono',monospace", fontSize:8, letterSpacing:"0.3em", color:"#7aadad", textTransform:"uppercase" }}>
-            × Close
-          </button>
+          <div style={{ position:"absolute", top:18, right:22, display:"flex", alignItems:"center", gap:16 }}>
+            <button onClick={handleShare} style={{ background:"none", border:"none", cursor:"pointer", fontFamily:"'JetBrains Mono',monospace", fontSize:8, letterSpacing:"0.3em", color: copied ? "#34d399" : "#7aadad", textTransform:"uppercase", transition:"color 0.2s" }}>
+              {copied ? "Copied ✓" : "Share ↗"}
+            </button>
+            <button onClick={onClose} style={{ background:"none", border:"none", cursor:"pointer", fontFamily:"'JetBrains Mono',monospace", fontSize:8, letterSpacing:"0.3em", color:"#7aadad", textTransform:"uppercase" }}>
+              × Close
+            </button>
+          </div>
           <p style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:8, letterSpacing:"0.28em", color:"#c9a84c", textTransform:"uppercase", marginBottom:6 }}>
             {book.tag}
           </p>
@@ -472,17 +486,31 @@ function BookModal({ book, onClose, isMobile }: { book: Book; onClose: () => voi
 
 // ── Page ──────────────────────────────────────────────────────────────────────
 
-export default function WandererPage() {
+function WandererPage() {
   const router = useRouter();
   const ci = galleryPieces.findIndex((p) => p.id === "ideas");
   const nextPiece = galleryPieces[(ci + 1) % galleryPieces.length];
   const prevPiece = galleryPieces[(ci - 1 + galleryPieces.length) % galleryPieces.length];
+
+  const searchParams = useSearchParams();
 
   const [hoveredBook, setHoveredBook] = useState<Book | null>(null);
   const [activeBook,  setActiveBook]  = useState<Book | null>(null);
   const [mouseY, setMouseY] = useState(0);
   const [entered, setEntered] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+
+  const toSlug = (title: string) => title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+
+  // Open the correct modal on initial load if ?book= is present
+  useEffect(() => {
+    const slug = searchParams.get("book");
+    if (slug) {
+      const book = RESEARCH_BOOKS.find((b) => toSlug(b.title) === slug);
+      if (book) setActiveBook(book);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => { setEntered(true); }, []);
 
@@ -493,13 +521,23 @@ export default function WandererPage() {
     return () => window.removeEventListener("resize", check);
   }, []);
 
+  const openBook = useCallback((book: Book) => {
+    setActiveBook(book);
+    router.replace(`?book=${toSlug(book.title)}`, { scroll: false });
+  }, [router]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const closeBook = useCallback(() => {
+    setActiveBook(null);
+    router.replace("?", { scroll: false });
+  }, [router]);
+
   const handleMouseMove = useCallback((e: React.MouseEvent) => {
     setMouseY((e.clientY / window.innerHeight - 0.5) * 3);
   }, []);
 
   useEffect(() => {
     const h = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && activeBook) { setActiveBook(null); return; }
+      if (e.key === "Escape" && activeBook) { closeBook(); return; }
       if (e.key === "Escape") router.push("/");
       if (!activeBook && e.key === "ArrowRight") router.push(`/gallery/${nextPiece.id}`);
       if (!activeBook && e.key === "ArrowLeft")  router.push(`/gallery/${prevPiece.id}`);
@@ -540,7 +578,7 @@ export default function WandererPage() {
               <p style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:7, letterSpacing:"0.3em", color:"rgba(201,168,76,0.3)", textTransform:"uppercase", textAlign:"center", marginBottom:20 }}>12 Documents · tap to read</p>
               <div style={{ height:1, background:"linear-gradient(to right,transparent,rgba(201,168,76,0.3),transparent)", marginBottom:16 }} />
               {RESEARCH_BOOKS.map((book) => (
-                <button key={book.id} onClick={() => setActiveBook(book)}
+                <button key={book.id} onClick={() => openBook(book)}
                   style={{ all:"unset", display:"flex", alignItems:"center", gap:14, width:"100%", padding:"14px 0", borderBottom:"1px solid rgba(201,168,76,0.1)", cursor:"pointer" }}>
                   <div style={{ width:6, height:36, borderRadius:2, background:book.leather, flexShrink:0 }} />
                   <div style={{ flex:1, textAlign:"left" }}>
@@ -570,9 +608,9 @@ export default function WandererPage() {
                       <div style={{ height:1, background:"linear-gradient(to right,transparent,rgba(201,168,76,0.25),transparent)", marginTop:10 }} />
                     </div>
                     <div style={{ padding:"16px 0 0" }}>
-                      <LibraryShelf books={ROW1} onHover={setHoveredBook} onOpen={setActiveBook} />
+                      <LibraryShelf books={ROW1} onHover={setHoveredBook} onOpen={openBook} />
                       <div style={{ height:16 }} />
-                      <LibraryShelf books={ROW2} onHover={setHoveredBook} onOpen={setActiveBook} />
+                      <LibraryShelf books={ROW2} onHover={setHoveredBook} onOpen={openBook} />
                     </div>
                     <div style={{ height:1, background:"linear-gradient(to right,transparent,rgba(201,168,76,0.25),transparent)", marginTop:4 }} />
                     <div style={{ height:16, background:"linear-gradient(to bottom,#261608,#160e04)" }} />
@@ -593,8 +631,16 @@ export default function WandererPage() {
 
       {/* Modal */}
       <AnimatePresence>
-        {activeBook && <BookModal book={activeBook} onClose={() => setActiveBook(null)} isMobile={isMobile} />}
+        {activeBook && <BookModal book={activeBook} onClose={closeBook} isMobile={isMobile} />}
       </AnimatePresence>
     </main>
+  );
+}
+
+export default function WandererPageWrapper() {
+  return (
+    <Suspense>
+      <WandererPage />
+    </Suspense>
   );
 }
